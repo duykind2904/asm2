@@ -22,7 +22,8 @@ new Vue({
 				if (this.user) {
 					if (this.user.image) {
 						this.image_user_file = await getFile(this.user.image).done();
-						this.user.image_user_url = URL.createObjectURL(this.image_user_file);
+						//this.user.image_user_url = URL.createObjectURL(this.image_user_file);
+						//this.user.image_user_url = `${this.url}/assets/images/bg_1.jpg`;
 					}
 					if(this.user.cvName) {
 						this.pdfFile = await getFile(this.user.cvName).done();

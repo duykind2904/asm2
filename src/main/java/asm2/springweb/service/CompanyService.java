@@ -1,6 +1,10 @@
 package asm2.springweb.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +23,16 @@ public class CompanyService {
 	
 	public Company save(Company company) {
 		return repo.save(company);
+	}
+	
+	public Boolean isCompanyExsitByEmail(String email) {
+		return repo.isCompanyExsitByEmail(email);
+	}
+	
+	public List<Company> getListOutstanding(int pageNumber, int pageSize) {
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		Page<Company> recruitmentPage = repo.getListOutstanding(pageable);
+		return recruitmentPage.getContent();
 	}
 
 }

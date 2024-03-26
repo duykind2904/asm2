@@ -66,9 +66,10 @@
 						<ul class="dropdown-menu">
 							<li class="nav-link dropdown-item"><a class="text-dark" href="${pageContext.request.contextPath}/profile/home">Hồ Sơ</a></li>
 							<li class="nav-link dropdown-item"><a class="text-dark" href="/save-job/get-list" >Công việc đã lưu</a></li>
-							<li class="nav-link dropdown-item"><a class="text-dark" href="/user/list-post" >Danh sách bài đăng</a></li>
+							<li class="nav-link dropdown-item"><a class="text-dark" href="${pageContext.request.contextPath}/post/list" >Danh sách bài đăng</a></li>
 							<li class="nav-link dropdown-item"><a class="text-dark" href="/user/get-list-apply" >Công việc đã ứng tuyển</a></li>
 							<li class="nav-link dropdown-item"><a class="text-dark" href="/user/get-list-company" >Công ty đã theo dõi</a></li>
+							<li class="nav-link dropdown-item"><a class="text-dark" href="${pageContext.request.contextPath}/post/create">tạo job</a></li>
 							<li class="nav-link dropdown-item"><a class="text-dark" href="${pageContext.request.contextPath}/logout" >Đăng xuất</a></li>
 						</ul>
 					</li>
@@ -84,7 +85,7 @@
 	</div>
 </nav>
 <!-- END nav -->
-				
+<section id="app">			
 <div class="hero-wrap img" style="background-image: url('<c:url value='/assets/images/bg_1.jpg' />')">
     <div class="overlay"></div>
     <div class="container">
@@ -304,21 +305,20 @@
 
                     </div>
                 </div>
-                <div class="row">
-                    <th:block th:each="recruitment : ${recruitments}">
+                <!-- <div class="row"> -->
+					<div v-for="(rec, index) in recs" :key="index">
                         <div class="col-md-12 ">
                             <div class="job-post-item p-4 d-block d-lg-flex align-items-center">
                                 <div class="one-third mb-4 mb-md-0">
                                     <div class="job-post-item-header align-items-center">
-                                        <span class="subadge" th:text="${recruitment.type}"></span>
-                                        <h2 class="mr-3 text-black" ><a th:text="${recruitment.title}" th:href="${'/recruitment/detail/'} +${recruitment.id}"></a></h2>
+                                        <span class="subadge">{{rec.type}}</span>
+                                        <h2 class="mr-3 text-black" ><a  th:href="#">{{rec.title}}</a></h2>
                                     </div>
                                     <div class="job-post-item-body d-block d-md-flex">
-                                        <div class="mr-3"><span class="icon-layers"></span> <a href="#" th:text="${recruitment.Company.nameCompany}" ></a></div>
-                                        <div><span class="icon-my_location"></span> <span th:text="${recruitment.address}"></span></div>
+                                        <div class="mr-3"><span class="icon-layers"></span> <a href="#"  >{{rec.companyName}}</a></div>
+                                        <div><span class="icon-my_location"></span> <span>{{rec.address}}</span></div>
                                     </div>
                                 </div>
-                                <input type="hidden" th:id="${'idRe'}+${recruitment.id}" th:value="${recruitment.id}">
                                 <div th:if="${session.user}" class="one-forth ml-auto d-flex align-items-center mt-4 md-md-0">
                                     <div th:if="${session.user.role.id == 1}">
                                         <a  th:onclick="'save(' +${recruitment.id}+ ')'" class="icon text-center d-flex justify-content-center align-items-center icon mr-2">
@@ -326,14 +326,6 @@
                                         </a>
                                     </div>
                                     <a th:if="${session.user.role.id == 1}" data-toggle="modal" th:data-target="${'#exampleModal'}+${recruitment.id}" class="btn btn-primary py-2">Apply Job</a>
-                                </div>
-                                <div th:unless="${session.user}" class="one-forth ml-auto d-flex align-items-center mt-4 md-md-0">
-                                    <div >
-                                        <a  th:onclick="'save(' +${recruitment.id}+ ')'" class="icon text-center d-flex justify-content-center align-items-center icon mr-2">
-                                            <span class="icon-heart"></span>
-                                        </a>
-                                    </div>
-                                    <a  data-toggle="modal" th:data-target="${'#exampleModal'}+${recruitment.id}" class="btn btn-primary py-2">Apply Job</a>
                                 </div>
                             </div>
                         </div><!-- end -->
@@ -390,9 +382,9 @@
                                 </div>
                             </div>
                         </div>
-                    </th:block>
+                  	</div>
 
-                </div>
+                <!-- </div> -->
             </div>
             <div class="col-lg-3 sidebar">
                 <div class="row justify-content-center pb-3">
@@ -400,29 +392,27 @@
                         <h2 class="mb-4">Công ty nổi bật</h2>
                     </div>
                 </div>
-                <th:block th:each="companies : ${companies}">
+                <div v-for="(c, index) in companies" :key="index">
                 <div class="sidebar-box">
                     <div class="">
-                        <a th:href="${'/user/detail-company/'}+${companies[0]}" class="company-wrap"><img th:src="${companies[2]}" class="img-fluid" alt="Colorlib Free Template"></a>
+                        <a href="#" class="company-wrap">
+                        <img :src="'${pageContext.request.contextPath}/assets/images/uploads/' + c.logo" height="100" width="100" class="img-fluid" alt="Colorlib Free Template"></a>
                         <div class="text p-3">
-                            <h3><a th:href="${'/user/detail-company/'}+${companies[0]}" th:text="${companies[1]}"></a></h3>
-                            <p><span class="number" style="color: black" th:text="${companies[3]}"></span> <span>Vị trí ứng tuyển</span></p>
+                            <h3><a href="#">{{c.name}}</a></h3>
+                            <p><span class="number" style="color: black">{{c.countRecruitmenting}}</span> <span class="ml-1">Vị trí ứng tuyển</span></p>
                         </div>
                     </div>
                 </div>
-                </th:block>
+                </div>
             </div>
         </div>
     </div>
 </section>
-
-<div id="app">
-  <h1>{{ message }}</h1>
-</div>
-
-
-<footer th:replace="public/fragments :: footer" class="ftco-footer ftco-bg-dark ftco-section"></footer>
-
+</section>	
+<script type="text/javascript">
+	window.user = ${user}; 
+	window.url = '${pageContext.request.contextPath}';
+</script>
 <script src="<c:url value='/assets/js/export/home.js' /> "></script>
 
 </body>

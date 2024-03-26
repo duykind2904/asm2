@@ -69,6 +69,7 @@
 								<li class="nav-link dropdown-item"><a class="text-dark" href="/user/list-post" >Danh sách bài đăng</a></li>
 								<li class="nav-link dropdown-item"><a class="text-dark" href="/user/get-list-apply" >Công việc đã ứng tuyển</a></li>
 								<li class="nav-link dropdown-item"><a class="text-dark" href="/user/get-list-company" >Công ty đã theo dõi</a></li>
+								<li class="nav-link dropdown-item"><a class="text-dark" href="${pageContext.request.contextPath}/job/create">tạo job</a></li>
 								<li class="nav-link dropdown-item"><a class="text-dark" href="${pageContext.request.contextPath}/logout" >Đăng xuất</a></li>
 							</ul>
 						</li>
@@ -97,6 +98,8 @@
 	                    </label>
 	                </div>
 	                <div style="margin-left: 0px" id="divImage" >
+	                	<img v-if="user.image && user.image !== ''" src="${pageContext.request.contextPath}/assets/images/bg_1.jpg" alt="Selected Image"
+	                     id="avatar" height="100" width="100" style="border-radius: 50px" >
 	                    <img v-if="user.image && user.image !== ''" :src="user.image_user_url" alt="Selected Image"
 	                     id="avatar" height="100" width="100" style="border-radius: 50px" >
 	                     <img v-else="user.image && user.image !== ''" id="avatar" height="100" width="100" style="border-radius: 50px" >

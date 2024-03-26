@@ -116,20 +116,28 @@ public class profileController {
 		return new ResponseEntity<String>("OK", HttpStatus.OK);
 	}
 	
+//	@GetMapping("/getFile.json")
+//	//@ResponseBody
+//	public ResponseEntity<byte[]> getFile(@RequestParam(name="fileName") String fileName) {
+//	    String filePath = "D:/uploads/" + fileName;
+//	    Path path = Paths.get(filePath);
+//	    try {
+//	        byte[] data = Files.readAllBytes(path);
+//	        return ResponseEntity.ok()
+//	                .header("Content-Disposition", "attachment; filename=" + fileName)
+//	                .body(data);
+//	    } catch (IOException e) {
+//	        e.printStackTrace();
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//	    }
+//	}
+	
 	@GetMapping("/getFile.json")
-	//@ResponseBody
-	public ResponseEntity<byte[]> getFile(@RequestParam(name="fileName") String fileName) {
+	@ResponseBody
+	public byte[] getFile(@RequestParam(name="fileName") String fileName) throws IOException {
 	    String filePath = "D:/uploads/" + fileName;
 	    Path path = Paths.get(filePath);
-	    try {
-	        byte[] data = Files.readAllBytes(path);
-	        return ResponseEntity.ok()
-	                .header("Content-Disposition", "attachment; filename=" + fileName)
-	                .body(data);
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	    }
+	    return Files.readAllBytes(path);
 	}
 	
 	
