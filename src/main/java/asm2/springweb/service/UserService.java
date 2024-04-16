@@ -43,5 +43,10 @@ public class UserService {
     public User findByEmail(String email) {   	
     	return repo.findByEmail(email);
     }
-
+    
+    public void updatenameCVToUser(int userId, String nameCV) {
+    	User userToUpdate = repo.getOne(userId);
+        userToUpdate.setCvName(nameCV);
+        repo.save(userToUpdate);
+    }
 }

@@ -94,41 +94,7 @@
         </div>
     </div>
 </div>
-<%-- <div th:if="${success}" class="toast" data-delay="2500" style="position:fixed; top: 100PX; left: 10PX;z-index: 2000;width: 300px">
-    <script>
-        swal({
-            title: 'Thành công!',
-            /* text: 'Redirecting...', */
-            icon: 'success',
-            timer: 3000,
-            buttons: true,
-            type: 'success'
-        })
-    </script>
-</div> --%>
-<%-- <div th:if="${error}" class="toast" data-delay="2500" style="position:fixed; top: 100PX; left: 10PX;z-index: 2000;width: 300px">
-    <script>
-        swal({
-            title: 'Bài đăng đang có người ứng tuyển!',
-            /* text: 'Redirecting...', */
-            icon: 'error',
-            timer: 3000,
-            buttons: true,
-            type: 'error'
-        })
-    </script>
-</div> --%>
-<%-- <div class="hero-wrap hero-wrap-2" style="background-image: url('user/assets/images/bg_1.jpg');" data-stellar-background-ratio="0.5" th:if="${session.user.role.id == 1 }">
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row no-gutters slider-text align-items-end justify-content-start">
-            <div class="col-md-12 text-center mb-5">
 
-                <h1 class="mb-3 bread">Không tìm thấy trang yêu cầu</h1>
-            </div>
-        </div>
-    </div>
-</div> --%>
 <section id="app" class="ftco-section bg-light">
     <div class="container">
         <div class="row">

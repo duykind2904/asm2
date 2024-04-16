@@ -51,5 +51,15 @@ public class RecruitmentService {
 	public int countRecruitmenting(int id) {
 		return repo.countRecruitmenting(id);
 	}
+	
+	public long countBySearchTitle(String key) {
+		return repo.countBySearchTitle(key);
+	}
+	
+	public List<Recruitment> getListBySearchTitle(String key, int pageNumber, int pageSize) {
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		Page<Recruitment> recruitmentPage = repo.getListBySearchTitle(key, pageable);
+		return recruitmentPage.getContent();
+	}
 
 }

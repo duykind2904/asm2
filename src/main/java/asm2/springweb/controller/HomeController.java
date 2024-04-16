@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import asm2.springweb.dto.ApplyPostDTO;
 import asm2.springweb.dto.CompanyDTO;
 import asm2.springweb.dto.RoleDTO;
 import asm2.springweb.dto.UserDTO;
@@ -48,23 +49,32 @@ public class HomeController {
 	
 	
 	@RequestMapping("/")
-	public String showHome(Model model) {	
-		UserDTO userDTO = new UserDTO();
-		model.addAttribute("user", Mapper.toJSON(userDTO));
+	public String showHome(Model model, Principal principal) {	
+		int userId = 0;
+		if(principal != null) {
+			User user = userService.findByEmail(principal.getName());
+			userId = user.getId();
+		}
+		ApplyPostDTO aPDTO = new ApplyPostDTO();
+				
+		model.addAttribute("userId", Mapper.toJSON(userId));
+		model.addAttribute("applyPost", Mapper.toJSON(aPDTO));
+				
 		return "home";
 	}
 	
 	
 	@RequestMapping("/loginSuccess")
 	public String loginSuccess(Model model, Principal principal) {		
-		UserDTO userDTO = new UserDTO();
-		RoleDTO roleDTO = new RoleDTO();
-		User user = userService.findByEmail(principal.getName());
-		BeanUtils.copyProperties(user.getRole(), roleDTO);
-		BeanUtils.copyProperties(user, userDTO);
-		userDTO.setRole(roleDTO);
-		System.out.println(Mapper.toJSON(userDTO));
-		model.addAttribute("user", Mapper.toJSON(userDTO));
+		int userId = 0;
+		if(principal != null) {
+			User user = userService.findByEmail(principal.getName());
+			userId = user.getId();
+		}
+				
+		model.addAttribute("userId", Mapper.toJSON(userId));
+		ApplyPostDTO aPDTO = new ApplyPostDTO();
+		model.addAttribute("applyPost", Mapper.toJSON(aPDTO));
 		
 		return "home";
 	}

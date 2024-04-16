@@ -11395,6 +11395,20 @@ h5,
 .job-post-item .icon span {
   color: #fdab44;
 }
+
+.job-post-item .iconShow span {
+  color: white;
+}
+.job-post-item .iconShow {
+  background-color: #fdab44;
+   width: 40px;
+  height: 40px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  border-radius: 50%;
+}
+
 .job-post-item .job-post-item-body span,
 .job-post-item .job-post-item-body a {
   text-transform: uppercase;

@@ -26,4 +26,13 @@ public class ApplyPostService {
 		Page<ApplyPost> page = repo.getListApplyPostByRecId(id, pageable);
 	    return page.getContent();
 	}
+	
+	public void save(ApplyPost app) {
+		repo.save(app);
+	}
+	
+	public boolean checkExistApply(int userId, int companyId) {
+		long count = repo.checkExist(userId, companyId);
+		return count > 0 ? true : false;
+	}
 }

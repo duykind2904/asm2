@@ -1,18 +1,21 @@
 package asm2.springweb.dto;
 
-import javax.persistence.Column;
-
 import asm2.springweb.entity.ApplyPost;
 import asm2.springweb.entity.Recruitment;
+import asm2.springweb.entity.User;
 
 public class ApplyPostDTO {
 	
 	private String createdAt;
 	private String nameCV;
-	private boolean status;
+	private Boolean status;
 	private String text;
 	private int recruitmentId;
     private int userId;
+    private User user;
+    private Recruitment recruitment;
+    
+    
 	public String getCreatedAt() {
 		return createdAt;
 	}
@@ -28,6 +31,17 @@ public class ApplyPostDTO {
 		
 		return appDTO;
 	}
+	
+	public static ApplyPost setToEntity(ApplyPostDTO aPDTO) {
+		ApplyPost aP = new ApplyPost();
+		if(aPDTO.getUser() != null) aP.setUser(aPDTO.getUser());
+		if(aPDTO.getRecruitment() != null) aP.setRecruitment(aPDTO.getRecruitment());
+		if(aPDTO.getNameCV() != null ) aP.setNameCV(aPDTO.getNameCV());
+		if(aPDTO.getText() != null) aP.setText(aPDTO.getText());
+		if(aPDTO.isStatus() != null) aP.setStatus(aPDTO.isStatus());
+		return aP;
+	}
+	
 	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
@@ -37,7 +51,7 @@ public class ApplyPostDTO {
 	public void setNameCV(String nameCV) {
 		this.nameCV = nameCV;
 	}
-	public boolean isStatus() {
+	public Boolean isStatus() {
 		return status;
 	}
 	public void setStatus(boolean status) {
@@ -60,6 +74,22 @@ public class ApplyPostDTO {
 	}
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Recruitment getRecruitment() {
+		return recruitment;
+	}
+
+	public void setRecruitment(Recruitment recruitment) {
+		this.recruitment = recruitment;
 	}
     
     

@@ -33,9 +33,14 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Intege
 	Page<Recruitment> getListOutstanding(Pageable pageable);
 	
 	@Query(value = "select count(*) from spring_workcv.recruitment where "
-            + "company_id = 1 and STR_TO_DATE(deadline, '%d/%m/%Y') >= CURDATE() ",
+            + "company_id = :id and STR_TO_DATE(deadline, '%d/%m/%Y') >= CURDATE() ",
             nativeQuery = true)
 	int countRecruitmenting(@Param("id") int id);
 	
+	@Query("SELECT COUNT(r) FROM Recruitment r WHERE r.title LIKE %:key%")
+	long countBySearchTitle(@Param("key") String key);
+	
+	@Query("SELECT r FROM Recruitment r WHERE r.title LIKE %:key%")
+	Page<Recruitment> getListBySearchTitle(@Param("key") String key, Pageable pageable);
 	
 }

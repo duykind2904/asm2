@@ -29,11 +29,11 @@ public class Company {
 	@Column(name="phone_number")
 	private String phoneNumber;	
 	
+	@Column(name="logo")
 	private String logo;
 	
 	private boolean status;
 	
-	//private String logoUrl;
 	
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -93,7 +93,6 @@ public class Company {
 		this.phoneNumber = phoneNumber;
 	}
 
-	@Column(name="logo")
 	public String getLogo() {
 		return logo;
 	}
@@ -121,6 +120,16 @@ public class Company {
 
 	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Recruitment> recruitment;
+
+
+	public List<Recruitment> getRecruitment() {
+		return recruitment;
+	}
+
+	public void setRecruitment(List<Recruitment> recruitment) {
+		this.recruitment = recruitment;
+	}
+	
 	
 	
 }

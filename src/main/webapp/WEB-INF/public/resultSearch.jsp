@@ -415,10 +415,10 @@
 </section>	
 <script type="text/javascript">
 	window.userId = ${userId};
-	window.applyPost = ${applyPost}; 
+	window.key = ${key}; 
 	window.url = '${pageContext.request.contextPath}';
 </script>
-<script src="<c:url value='/assets/js/export/home.js' /> "></script>
+<script src="<c:url value='/assets/js/export/resultSearch.js' /> "></script>
 
 </body>
 </html>

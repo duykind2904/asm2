@@ -4,14 +4,14 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head th:replace="public/fragments :: html_head">
-    <title>Skillhunt - Free Bootstrap 4 Template by Colorlib</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
+<head">
+    <title>Work CV</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&display=swap" rel="stylesheet">
 
- <!-- CSS -->
+  <!-- CSS -->
   <link rel="stylesheet" href="<c:url value='/assets/css/open-iconic-bootstrap.min.css' /> ">
   <link rel="stylesheet" href="<c:url value='/assets/css/animate.css' /> ">
   <link rel="stylesheet" href="<c:url value='/assets/css/owl.carousel.min.css' /> ">
@@ -41,44 +41,46 @@
   <script src="<c:url value='/assets/js/jquery.stellar.min.js' /> "></script>
   <script src="<c:url value='/assets/js/owl.carousel.min.js' /> "></script>
   <script src="<c:url value='/assets/js/jquery.magnific-popup.min.js' /> "></script>
-  <script src="<c:url value='/assets/js/aos.js' /> "></script>
+  <%-- <script src="<c:url value='/assets/js/aos.js' /> "></script> --%>
   <script src="<c:url value='/assets/js/jquery.animateNumber.min.js' /> "></script>
   <script src="<c:url value='/assets/js/scrollax.min.js' /> "></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
-  <script src="<c:url value='/assets/js/google-map.js' /> "></script>
-  <script src="<c:url value='/assets/js/main.js' /> "></script>
-  <script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
+  <%-- <script src="<c:url value='/assets/js/main.js' /> "></script> --%>
+  <!-- <script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script> -->
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid px-md-4	">
-          <a class="navbar-brand" href="/">Work CV</a>
-      
-          <div class="collapse navbar-collapse" id="ftco-nav">
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item active"><a href="/" class="nav-link">Trang chủ</a></li>
-              <li class="'nav-item"><a href="/" class="nav-link">Công việc</a></li>
-              <li class="nav-item"><a href="/" class="nav-link">Ứng cử viên</a></li>
-                <ul class="dropdown">
-                  <li><a href="/">Hồ Sơ</a></li>
-                  <li ><a href="/save-job/get-list" >Công việc đã lưu</a></li>
-                  <li ><a href="/user/list-post" >Danh sách bài đăng</a></li>
-                  <li ><a href="/user/get-list-apply" >Công việc đã ứng tuyển</a></li>
-                  <li ><a href="/user/get-list-company" >Công ty đã theo dõi</a></li>
-                  <li><a href="/auth/logout" >Đăng xuất</a></li>
-                </ul>
-                <li></li>
-                <li class="nav-item cta mr-md-1"><a href="/recruitment/post" class="nav-link">Đăng tuyển</a></li>
-              <li class="nav-item cta cta-colored"><a href="/auth/login" class="nav-link">Đăng nhập</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-<!-- END nav -->
-
-
+		<div class="container-fluid px-md-4	">
+			<a class="navbar-brand" href="/">Work CV</a>				
+			<div class="collapse navbar-collapse" id="ftco-nav">     
+				<ul class="navbar-nav ml-auto">				
+					<c:if test="${pageContext.request.userPrincipal != null}">
+						<li class="nav-item cta mr-md-1" style="position: relative;">
+							<a class="dropdown-toggle nav-link pr-5" data-toggle="dropdown" href="#">${pageContext.request.userPrincipal.name}</a>            
+							<ul class="dropdown-menu">
+								<li class="nav-link dropdown-item"><a class="text-dark" href="${pageContext.request.contextPath}/profile/home">Hồ Sơ</a></li>
+								<li class="nav-link dropdown-item"><a class="text-dark" href="/save-job/get-list" >Công việc đã lưu</a></li>
+								<li class="nav-link dropdown-item"><a class="text-dark" href="/user/list-post" >Danh sách bài đăng</a></li>
+								<li class="nav-link dropdown-item"><a class="text-dark" href="/user/get-list-apply" >Công việc đã ứng tuyển</a></li>
+								<li class="nav-link dropdown-item"><a class="text-dark" href="/user/get-list-company" >Công ty đã theo dõi</a></li>
+								<li class="nav-link dropdown-item"><a class="text-dark" href="${pageContext.request.contextPath}/logout" >Đăng xuất</a></li>
+							</ul>
+						</li>
+					</c:if>
+						
+					<c:if test="${pageContext.request.userPrincipal == null}">
+						<li class="nav-item cta cta-colored"><a href="${pageContext.request.contextPath}/auth/login" class="nav-link">Đăng nhập</a></li>
+					</c:if>
+					
+				</ul>
+			</div>
+	    
+		</div>
+	</nav>
 
 <div class="hero-wrap hero-wrap-2" style="background-image: url('/assets/images/bg_1.jpg');" data-stellar-background-ratio="0.5">
     <div class="overlay"></div>
@@ -92,19 +94,19 @@
     </div>
 </div>
 
-<section style="margin-top: 10px" class="site-section">
+<section id="app" style="margin-top: 10px" class="site-section">
     <div class="container">
         <div class="row align-items-center mb-5">
             <div class="col-lg-8 mb-4 mb-lg-0">
                 <div class="d-flex align-items-center">
                     <div class="border p-2 d-inline-block mr-3 rounded">
-                        <img width="100" height="100" th:src="${company.logo}" alt="Image">
+                        <img width="100" height="100"  alt="Image">
                     </div>
                     <div>
-                        <h2 th:text="${company.nameCompany}"></h2>
+                        <h2>{{company.name}}</h2>
                         <div>
-                            <span class="icon-briefcase mr-2"></span><span th:text="${company.email}" class="ml-0 mr-2 mb-2"></span>
-                            <span  class="icon-room mr-2"></span ><span th:text="${company.address}" class="m-2"></span>
+                            <span class="icon-briefcase mr-2"></span><span  class="ml-0 mr-2 mb-2">{{company.email}}</span>
+                            <span  class="icon-room mr-2"></span ><span class="m-2">{{company.address}}</span>
 
                         </div>
                         <input type="hidden" id="idCompany">
@@ -113,14 +115,14 @@
             </div>
             <div class="col-lg-4">
                 <div class="row">
-                    <div th:if="${session.user}" class="col-6">
-                        <a th:if="${session.user.role.id == 1}" onclick="follow()" class="btn btn-block btn-light btn-md"><span class="icon-heart-o mr-2 text-danger"></span>Theo dõi</a>
+                <div class="col-3">
                     </div>
-                    <div th:unless="${session.user}" class="col-6">
-                        <a  onclick="follow()" class="btn btn-block btn-light btn-md"><span class="icon-heart-o mr-2 text-danger"></span>Theo dõi</a>
+                    <div  class="col-6">
+                        <a @click="followCompany" v-if="!isFollowCompany" class="btn btn-block btn-light btn-md"><span class="icon-heart-o mr-2 text-danger"></span>Theo dõi</a>
+                        <a @click="followCompany" v-if="isFollowCompany" class="btn btn-block btn-light btn-md"><span class="fa fa-heart mr-2 text-danger"></span>Bỏ theo dõi</a>
                     </div>
-                    <div class="col-6">
-
+                    
+                    <div class="col-3">
                     </div>
                 </div>
             </div>
@@ -130,7 +132,7 @@
                 <div class="mb-5">
 
                     <h3 class="h5 d-flex align-items-center mb-4 text-primary"><span class="icon-align-left mr-3"></span>Mô tả công việc</h3>
-                    <p th:utext="${company.description}"></p>
+                    <p>{{company.description}}</p>
                 </div>
 
             </div>
@@ -139,9 +141,9 @@
                     <h3 class="text-primary  mt-3 h5 pl-3 mb-3 ">Tóm tắt công việc</h3>
                     <ul class="list-unstyled pl-3 mb-0">
 
-                        <li class="mb-2"><strong class="text-black">Email công ty: </strong> <span th:text="${company.email}"></span></li>
-                        <li class="mb-2"><strong class="text-black">Số điện thoại: </strong> <span th:text="${company.phoneNumber}"></span></li>
-                        <li class="mb-2"><strong class="text-black">Đại chỉ: </strong> <span th:text="${company.address}"></span></li>
+                        <li class="mb-2"><strong class="text-black">Email công ty: </strong> <span>{{company.email}}</span></li>
+                        <li class="mb-2"><strong class="text-black">Số điện thoại: </strong> <span>{{company.phoneNumber}}</span></li>
+                        <li class="mb-2"><strong class="text-black">Địa chỉ: </strong> <span>{{company.address}}</span></li>
                     </ul>
                 </div>
 
@@ -158,72 +160,14 @@
             </div>
         </div>
     </div>
-    <script>
-        function follow(){
-            var name = "#idCompany";
-            var idCompany = $(name).val();
-            var formData = new FormData();
-            formData.append('idCompany', idCompany);
-            $.ajax(
-                {
-                    type: 'POST',
-                    url: '/user/follow-company/',
-                    contentType: false,
-                    processData: false,
-                    data: formData,
-                    success: function (data) {
-                        if(data == "false"){
-                            swal({
-                                title: 'Bạn cần phải đăng nhập!',
-                                /* text: 'Redirecting...', */
-                                icon: 'error',
-                                timer: 3000,
-                                buttons: true,
-                                type: 'error'
-                            })
-                        }else if(data == "true"){
-                            swal({
-                                title: 'Theo dõi thành công!',
-                                /* text: 'Redirecting...', */
-                                icon: 'success',
-                                timer: 3000,
-                                buttons: true,
-                                type: 'success'
-                            })
-                        }else{
-                            swal({
-                                title: 'Bạn đã theo dõi công ty này!',
-                                /* text: 'Redirecting...', */
-                                icon: 'error',
-                                timer: 3000,
-                                buttons: true,
-                                type: 'error'
-                            })
-                        }
-                    },
-                    error: function (err) {
-                        alert(err);
-                    }
-                }
-            )
-        }
-    </script>
 </section>
 
-<footer class="footer" class="ftco-footer ftco-bg-dark ftco-section">
-    <div class="container">
-  
-      <div class="row">
-        <div class="col-md-12 text-center">
-  
-          <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            Copyright &copy;<script>document.write(new Date().getFullYear());</script>  <i class="icon-heart text-danger" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">KhuongTM</a>
-            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
-        </div>
-      </div>
-    </div>
-  </footer>
+<script type="text/javascript">
+	window.userId = ${userId};
+	window.company = ${company};
+	window.url = '${pageContext.request.contextPath}';
+</script>
 
-</footer>
+<script src="<c:url value='/assets/js/export/company_detail.js' /> "></script>
 </body>
 </html>

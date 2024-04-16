@@ -17,7 +17,7 @@ const app = new Vue({
 			if (document.readyState == "complete") {
 				app.totalCount = await countListPost().done();
 				if(app.totalCount > 0) {
-					app.listPost = await getListPost(app.pageNumer, app.pageSize).done();
+					app.listPost = await getListPost(app.pageNumber, app.pageSize).done();
 					this.activeIndex = 1;
 					if(app.totalCount % app.pageSize > 0) {
 						app.pageTotal = app.listPost.length / app.pageSize + 1;

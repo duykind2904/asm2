@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import asm2.springweb.dto.ApplyPostDTO;
 import asm2.springweb.dto.RoleDTO;
 import asm2.springweb.entity.Role;
 import asm2.springweb.entity.User;
@@ -45,6 +46,9 @@ public class LoginController {
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));		
 		User u = userService.save(user);
 		model.addAttribute("user", Mapper.toJSON(u));
+		
+		ApplyPostDTO aPDTO = new ApplyPostDTO();
+		model.addAttribute("applyPost", Mapper.toJSON(aPDTO));
 		
 		return "redirect:/home";
 	}

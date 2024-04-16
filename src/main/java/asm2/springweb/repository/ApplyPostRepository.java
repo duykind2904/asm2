@@ -16,4 +16,7 @@ public interface ApplyPostRepository extends JpaRepository<ApplyPost, ApplyPostI
 	
 	@Query("SELECT a FROM ApplyPost a WHERE a.recruitment.id = :id")
 	Page<ApplyPost> getListApplyPostByRecId(@Param("id") int id, Pageable pageable);
+	
+	@Query("SELECT COUNT(a) FROM ApplyPost a WHERE a.user.id = :userId AND a.recruitment.id = :recId")
+	long checkExist(@Param("userId") int userId, @Param("recId") int recId);
 }
