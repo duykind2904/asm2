@@ -6,10 +6,9 @@ const app = new Vue({
 	url: window.url,
     recs: [],
     companies: [],
-    
+    categories: [],
     keySearch: '',
     
-    //isFollowRec: false,
     selectionOption: '',
     fileCV: null,
   },
@@ -20,17 +19,20 @@ const app = new Vue({
 				await getRecruitmentOutstanding().done((response) => {
 					setRecuiment(response).then((result) => {
 						app.recs = result;
-				        console.log(11, result);
+				        console.log('recs = ', result);
 				    })
 				    .catch((error) => {
 				        console.error(error);
-				    });
-					//console.log(app.recs);					
+				    });				
 				});
 				
 				await getCompanyOutstanding().done((response) => {
 					app.companies = response;
-					//console.log(app.companies);
+					console.log('companies = ', app.companies);
+				});
+				
+				await findCategoriesWithRecruitmentCount().done((response) => {
+					app.categories = response;
 				});
 			}
 		}
@@ -38,18 +40,18 @@ const app = new Vue({
   
   
   methods: {
-	  async handleJobSearch() {
+	  handleJobSearch() {
 		  window.location.href = this.url + "/post/searchJob?key=" + app.keySearch;
 	  },
 
-	  async handleCompanySearch() {
+	  handleCompanySearch() {
 		  window.location.href = this.url + "/post/searchCompany?key=" + app.keySearch;
 	  },
 
-	  async handleAddressSearch() {
+	  handleAddressSearch() {
 		  window.location.href = this.url + "/post/searchAddress?key=" + app.keySearch;
 	  },
-	  
+
 	  folowRecuitment(recId, isFollow) {
 		  if (app.userId > 0) {
 			  var rec = app.recs.find(item => item.id === recId);
@@ -78,74 +80,80 @@ const app = new Vue({
 			  });
 		  }
 	  },
-		
-		openModalApplyPost(recId) {
-			if (app.userId > 0) {
-				 $(`#exampleModal-${recId}`).modal('show');
-			  } else {
-				  swal({
-					  title: "Bạn chưa đăng nhập",
-					  text: "Đến trang đăng nhập?",
-					  icon: "warning",
-					  buttons: {
-						  cancel: "Hủy",
-						  confirm: "OK"
-					  },
-				  }).then((value) => {
-					  if (value) {
-						  window.location.href = this.url + "/auth/login";
-					  }
-				  });
-			  }
-		},
-		
-		checkPdf(event) {
-			const file = event.target.files[0];
 
-			if (file.type === 'application/pdf') {
-				app.fileCV = file;
-			} else {
-				swal("Vui lòng chọn một tập tin PDF.");		
-			}
-			event.target.value = '';
-		},
+	  openModalApplyPost(recId) {
+		  if (app.userId > 0) {
+			  $(`#exampleModal-${recId}`).modal('show');
+		  } else {
+			  swal({
+				  title: "Bạn chưa đăng nhập",
+				  text: "Đến trang đăng nhập?",
+				  icon: "warning",
+				  buttons: {
+					  cancel: "Hủy",
+					  confirm: "OK"
+				  },
+			  }).then((value) => {
+				  if (value) {
+					  window.location.href = this.url + "/auth/login";
+				  }
+			  });
+		  }
+	  },
+
+	  checkPdf(event) {
+		  const file = event.target.files[0];
+
+		  if (file.type === 'application/pdf') {
+			  app.fileCV = file;
+		  } else {
+			  swal("Vui lòng chọn một tập tin PDF.");
+		  }
+	  },
 		
-		async handleApplyPost(recId) {
-			if (app.userId > 0) {
-				app.applyPost.userId = app.userId;
-				 app.applyPost.recruitmentId = recId;
-				
-				if(app.selectionOption == 1) {
-					app.applyPost.nameCV = await getFileNameCV(app.userId);
-					if(!app.applyPost.nameCV.trim()) {
-						swal("Bạn chưa có file CV. Vui lòng cập nhật file CV của bạn");	
-						return;
-					}
-				} else {
-					app.applyPost.nameCV = await saveFile(file).done();
-					var OK = updatenameCVToUser(app.userId, app.applyPost.nameCV);
-				}
-				
-				await saveApplyPost(app.applyPost).done();
-				swall("Nộp đơn ứng tuyển thành công");
-				
+	  async handleApplyPost(recId) {
+		  if (app.userId > 0) {
+			  app.applyPost.userId = app.userId;
+			  app.applyPost.recruitmentId = recId;
+			  
+			  if (app.selectionOption == 1) {
+				  let fileNameCV = await getFileNameCV(app.userId).done();
+				  if (fileNameCV.trim()) {
+					  app.applyPost.nameCV = fileNameCV;
+				  } else {
+					  swal("Bạn chưa có file CV. Vui lòng cập nhật file CV của bạn");
+					  return;
+				  }
 			  } else {
-				  swal({
-					  title: "Bạn chưa đăng nhập",
-					  text: "Đến trang đăng nhập?",
-					  icon: "warning",
-					  buttons: {
-						  cancel: "Hủy",
-						  confirm: "OK"
-					  },
-				  }).then((value) => {
-					  if (value) {
-						  window.location.href = this.url + "/auth/login";
-					  }
-				  });
+				  /*if (fileNameCV.trim()) {
+					  await deleteFile(fileNameCV);
+				  }*/
+				  app.applyPost.nameCV = await saveFile(app.fileCV).done();
+				  //var OK = updatenameCVToUser(app.userId, app.applyPost.nameCV);
 			  }
-			
-		}
+
+			  await saveApplyPost(app.applyPost).done();
+			  swal("Nộp đơn ứng tuyển thành công");
+			  var rec = app.recs.find(item => item.id === recId);
+			  rec.isApply = true;
+
+		  } else {
+			  swal({
+				  title: "Bạn chưa đăng nhập",
+				  text: "Đến trang đăng nhập?",
+				  icon: "warning",
+				  buttons: {
+					  cancel: "Hủy",
+					  confirm: "OK"
+				  },
+			  }).then((value) => {
+				  if (value) {
+					  window.location.href = this.url + "/auth/login";
+				  }
+			  });
+		  }
+
+	  }
 
 
 
@@ -183,6 +191,15 @@ function getCompanyOutstanding() {
 	});
 }
 
+function findCategoriesWithRecruitmentCount() {
+	
+	return $.ajax({
+		url: `${window.url}/category/findCategoriesWithRecruitmentCount.json`,
+		cache: false, 
+		method: 'GET'
+	});
+}
+
 function checkFollowAndApplyPost(userId, recId) {
 	return $.ajax({
 		url: `${window.url}/post/checkFollowAndApplyPost.json`,
@@ -210,36 +227,9 @@ function saveFollowPost(userId, recId, isFollow) {
 	});
 }
 
-
-
-
-function postSearchAjax(key, pageNumber, pageSize) {
-	return $.ajax({
-		url: `${window.url}/post/search`,
-		data: {
-			key: key,
-			pageNumber: pageNumber,
-			pageSize: pageSize,
-		},
-		cache: false, 
-		method: 'GET'
-	});
-}
-
-function countPostSearchAjax(key) {
-	return $.ajax({
-		url: `${window.url}/post/countSearch`,
-		data: {
-			key: key,
-		},
-		cache: false, 
-		method: 'GET'
-	});
-}
-
 function getFileNameCV(userId) {
 	return $.ajax({
-		url: `${window.url}/post/getFileNameCVByUserId`,
+		url: `${window.url}/post/getFileNameCVByUserId.json`,
 		data: {
 			userId: userId,
 		},
@@ -248,15 +238,26 @@ function getFileNameCV(userId) {
 	});
 }
 
-function saveFile(file) {
+function deleteFile(fileName) {
 	return $.ajax({
-		url: `${window.url}/post/saveFile.json`,
-		cache: false,
+		url: `${window.url}/file/deleteFile.json`,
 		data: {
-			file: file,
+			fileName: fileName,
 		},
-		method: 'GET',
-		type: 'GET'
+		cache: false, 
+		method: 'GET'
+	});
+}
+
+function saveFile(file) {
+	var formData = new FormData();
+	formData.append('file', file);
+	return $.ajax({
+		url: `${window.url}/file/saveFile.json`,
+		type: 'POST',
+        data: formData, 
+        processData: false, 
+        contentType: false, 
 	});
 }
 

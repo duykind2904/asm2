@@ -49,18 +49,40 @@ new Vue({
 			});
 			
 			this.user.password = this.password1;
-			await saveUser(this.user);
-
+			
+			var userId = await saveUser(this.user);
+									
+			if(userId > 0) {
+				swal('Xác thực tài khoản. Một liên kết đã gửi vào email của bạn. vui lòng nhấn vào liên kết để xác thực tài khoản')
+				await authenticateEmail(this.user.email);
+				setTimeout(function() {
+					window.location.href = this.url + "/";
+				}, 1000);
+			} else {
+				swal('Đăng ký không thành công');
+			}
+			
 		}		
 		
 	},
 	
-	handleLogin(event) {
+	async handleLogin(event) {
 		event.preventDefault();
 				
 		var bool = this.checkInputLogin();		
-		if (bool) {			
-			event.target.submit();
+		if (bool) {
+			var userStatus = await checkStatusUserByEmail(this.emailLogin).then();
+			if(userStatus == "true") {
+				event.target.submit();
+			} else if (userStatus == "false"){
+				swal('Xác thực tài khoản. Một liên kết đã gửi vào email của bạn. vui lòng nhấn vào liên kết để xác thực tài khoản');
+				await authenticateEmail(this.emailLogin);
+				/*setTimeout(function() {
+					window.location.href = this.url + "/";
+				}, 5000);*/
+			} else {
+				this.errorLogin = false;
+			}			
 		}		
 		
 	},
@@ -87,7 +109,7 @@ new Vue({
 		}
 		
 		const passwordPattern = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{8,}$/;
-		/*if(!this.password1) {
+		if(!this.password1) {
 			this.passwordMsg = "(Password không được để trống)";
 			isValid = false;
 		} else if (!passwordPattern.test(this.password1)) {
@@ -96,7 +118,7 @@ new Vue({
 		} else if(this.password2 && this.password1 !== this.password2 ) {				 
 			this.rePasswordMsg = "(Password không giống nhau)";
 			isValid = false;
-		}*/	
+		}	
 		
 		if(!this.password2) {
 			this.rePasswordMsg = "(RePassword không được để trống)";
@@ -159,7 +181,7 @@ new Vue({
 
 function saveUser(user) {
 	return $.ajax({
-		url: save_user,
+		url: `${window.url}/auth/saveUser.json`,
 		data: JSON.stringify(user),
 		cache: false,
 		contentType: 'application/json',
@@ -170,9 +192,47 @@ function saveUser(user) {
 	
 }
 
+function authenticateEmail(email) {
+	return $.ajax({
+		url: `${window.url}/auth/authenticateEmail.json`,
+		data: {
+			email: email,
+		},
+		cache: false,
+		method: 'POST',
+		type: 'POST'
+	});	
+}
+
+function checkStatusUserByEmail(email) {
+	return $.ajax({
+		url: `${window.url}/auth/checkStatusUserByEmail.json`,
+		data: {
+			email: email,
+		},
+		cache: false,
+		method: 'POST',
+		type: 'POST'
+	});	
+}
+
+function loginSuccess(email, password) {
+	return $.ajax({
+		url: `${window.url}/auth/loginSuccess.json`,
+		data: {
+			email: email,
+			password: password,
+		},
+		cache: false,
+		method: 'POST',
+		type: 'POST'
+	});	
+}
+
+
 function getRole(id) {
 	return $.ajax({
-		url: getRole_url,
+		url: `${window.url}/auth/getRole.json`,
 		data: {
 			roleId: id,
 		},
@@ -185,7 +245,7 @@ function getRole(id) {
 
 function checkEmailRegister(email) {
 	return $.ajax({
-		url: checkEmail_url,
+		url: `${window.url}/auth/checkEmail.json`,
 		data: {
 			email: email,
 		},

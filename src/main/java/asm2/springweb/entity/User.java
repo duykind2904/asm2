@@ -23,7 +23,7 @@ public class User {
 	private String description;		
 	private String password;		
 	private String phoneNumber;		
-	private int status;		
+	private boolean status;		
 	private String image;
 	private String cvName;
 		
@@ -98,11 +98,11 @@ public class User {
 	}
 
 	@Column(name="status")
-	public int getStatus() {
+	public boolean isStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(boolean status) {
 		this.status = status;
 	}
 

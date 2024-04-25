@@ -189,6 +189,14 @@ public class Recruitment {
 	public void setCategorySelected(String categorySelected) {
 		this.categorySelected = categorySelected;
 	}
+
+	public List<ApplyPost> getApplyPosts() {
+		return applyPosts;
+	}
+
+	public void setApplyPosts(List<ApplyPost> applyPosts) {
+		this.applyPosts = applyPosts;
+	}
 	
 	
 	

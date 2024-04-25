@@ -61,5 +61,25 @@ public class RecruitmentService {
 		Page<Recruitment> recruitmentPage = repo.getListBySearchTitle(key, pageable);
 		return recruitmentPage.getContent();
 	}
+	
+	public long countBySearchCompany(String key) {
+		return repo.countBySearchCompany(key);
+	}
+	
+	public List<Recruitment> getListBySearchCompany(String key, int pageNumber, int pageSize) {
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		Page<Recruitment> recruitmentPage = repo.getListBySearchCompany(key, pageable);
+		return recruitmentPage.getContent();
+	}
+	
+	public long countBySearchAddress(String key) {
+		return repo.countBySearchAddress(key);
+	}
+	
+	public List<Recruitment> getListBySearchAddress(String key, int pageNumber, int pageSize) {
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		Page<Recruitment> recruitmentPage = repo.getListBySearchAddress(key, pageable);
+		return recruitmentPage.getContent();
+	}
 
 }

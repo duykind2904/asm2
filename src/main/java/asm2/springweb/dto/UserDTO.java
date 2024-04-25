@@ -11,28 +11,29 @@ public class UserDTO {
 	private String description;	
 	private String password;	
 	private String phoneNumber;	
-	private int status;	
+	private boolean status;	
 	private String image;
 	
     private RoleDTO role;
 	
-	private String cvId;
+	private String cvName;
 	
-//	public static UserDTO convertToUserDTO(User user) {
-//		UserDTO u = new UserDTO();
-//		u.setId(user.getId());
-//		u.setAddress(user.getAddress());
-//		u.setEmail(user.getEmail());
-//		u.setFullName(user.getFullName());
-//		u.setDescription(user.getDescription());
-//		u.setPassword(user.getPassword());
-//		u.setPhoneNumber(user.getPhoneNumber());
-//		u.setStatus(user.getStatus());
-//		u.setImage(user.getImage());
-//		u.setCvId(user.getCvId());
-//		
-//		return u;
-//	}
+	public static UserDTO convertToDTO(User user) {
+		UserDTO u = new UserDTO();
+		u.setId(user.getId());
+		if(user.getAddress() != null) u.setAddress(user.getAddress());
+		if(user.getEmail() != null) u.setEmail(user.getEmail());
+		if(user.getFullName() != null) u.setFullName(user.getFullName());
+		if(user.getDescription() != null) u.setDescription(user.getDescription());
+//		if(user.getAddress() != null) u.setPassword(user.getPassword());
+		if(user.getPhoneNumber() != null) u.setPhoneNumber(user.getPhoneNumber());
+		u.setStatus(user.isStatus());
+		if(user.getImage() != null) u.setImage(user.getImage());
+		if(user.getCvName() != null) u.setCvName(user.getCvName());
+		
+		return u;
+	}
+
 
 	public int getId() {
 		return id;
@@ -90,11 +91,11 @@ public class UserDTO {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public int getStatus() {
+	public boolean isStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(boolean status) {
 		this.status = status;
 	}
 
@@ -114,12 +115,12 @@ public class UserDTO {
 		this.role = role;
 	}
 
-	public String getCvId() {
-		return cvId;
+	public String getCvName() {
+		return cvName;
 	}
 
-	public void setCvId(String cvId) {
-		this.cvId = cvId;
+	public void setCvName(String cvName) {
+		this.cvName = cvName;
 	}
 	
 	

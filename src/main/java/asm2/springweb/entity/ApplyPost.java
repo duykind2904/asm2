@@ -26,7 +26,7 @@ public class ApplyPost {
 	private String nameCV;
 	
 	@Column(name="status")
-	private boolean status;
+	private Boolean status;
 	
 	@Column(name="text")
 	private String text;
@@ -50,6 +50,9 @@ public class ApplyPost {
 	public void setId(ApplyPostId id) {
 		this.id = id;
 	}
+	public void setId(int userId, int recId) {
+		this.id = new ApplyPostId(recId, userId);
+	}
 
 	public String getCreatedAt() {
 		return createdAt;
@@ -67,11 +70,11 @@ public class ApplyPost {
 		this.nameCV = nameCV;
 	}
 
-	public boolean isStatus() {
+	public Boolean isStatus() {
 		return status;
 	}
 
-	public void setStatus(boolean status) {
+	public void setStatus(Boolean status) {
 		this.status = status;
 	}
 

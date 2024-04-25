@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -68,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.formLogin()
 			.loginPage("/auth/login").usernameParameter("email").passwordParameter("password")
 			.loginProcessingUrl("/authenticate")		
-			.defaultSuccessUrl("/loginSuccess")
+			.defaultSuccessUrl("/")
 			.permitAll()
 //			.successHandler((request, response, authentication) -> {
 //			    String contextPath = request.getContextPath();
@@ -96,5 +97,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	        chain.doFilter(request, response);
 		}
 	}
+	
+	@Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
 }

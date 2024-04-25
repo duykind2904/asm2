@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import asm2.springweb.dto.ApplyPostDTO;
+import asm2.springweb.dto.RecruitmentDTO;
 import asm2.springweb.entity.ApplyPost;
 import asm2.springweb.entity.Category;
 import asm2.springweb.entity.Company;
@@ -69,15 +71,22 @@ public class PostController {
 	}
 	
 	@GetMapping("/detail")
-	public String detailPost(@RequestParam(name="id", defaultValue = "0") int id, Model model) {
+	public String detailPost(@RequestParam(name="id", defaultValue = "0") int id, Model model, Principal principal) {
+		User user = new User();
+		if(principal != null) {
+			user = userService.findByEmail(principal.getName());
+		}
+				
 		Recruitment recruitment = recruitmentService.findById(id);
 		recruitment.setCategorySelected(String.valueOf(recruitment.getCategory().getId()));
-		recruitment.setCategory(null);
-		recruitment.setCompany(null);
-//		Recruitment recruitment = new Recruitment()
+		RecruitmentDTO recDTO = RecruitmentDTO.convertToDTO(recruitment);
 
-		model.addAttribute("recruitment", Mapper.toJSON(recruitment));
-		return "detail-post";
+		ApplyPostDTO aPDTO = new ApplyPostDTO();
+		
+		model.addAttribute("applyPost", Mapper.toJSON(aPDTO));
+		model.addAttribute("userId", Mapper.toJSON(user.getId()));
+		model.addAttribute("recruitment", Mapper.toJSON(recDTO));
+		return "post-detail";
 	}
 	
 	@GetMapping("/edit")
@@ -86,9 +95,54 @@ public class PostController {
 		recruitment.setCategorySelected(String.valueOf(recruitment.getCategory().getId()));
 		recruitment.setCategory(null);
 		recruitment.setCompany(null);
-//		Recruitment recruitment = new Recruitment();
+		
 		model.addAttribute("recruitment", Mapper.toJSON(recruitment));
 		return "post-job";
+	}
+	
+	@GetMapping("/searchJob")
+	public String pageSearch(Principal principal, Model model,
+			@RequestParam(name="key", defaultValue = "") String key) {
+		User user = new User();
+		if(principal != null) {
+			user = userService.findByEmail(principal.getName());
+		}
+		ApplyPostDTO aPDTO = new ApplyPostDTO();
+		
+		model.addAttribute("applyPost", Mapper.toJSON(aPDTO));
+		model.addAttribute("key", Mapper.toJSON(key));
+		model.addAttribute("userId", Mapper.toJSON(user.getId()));
+		return "resultSearch";
+	}
+	
+	@GetMapping("/searchCompany")
+	public String pageSearchCompany(Principal principal, Model model,
+			@RequestParam(name="key", defaultValue = "") String key) {
+		User user = new User();
+		if(principal != null) {
+			user = userService.findByEmail(principal.getName());
+		}
+		ApplyPostDTO aPDTO = new ApplyPostDTO();
+		
+		model.addAttribute("applyPost", Mapper.toJSON(aPDTO));
+		model.addAttribute("key", Mapper.toJSON(key));
+		model.addAttribute("userId", Mapper.toJSON(user.getId()));
+		return "resultSearchCompany";
+	}
+	
+	@GetMapping("/searchAddress")
+	public String pageSearchAddress(Principal principal, Model model,
+			@RequestParam(name="key", defaultValue = "") String key) {
+		User user = new User();
+		if(principal != null) {
+			user = userService.findByEmail(principal.getName());
+		}
+		ApplyPostDTO aPDTO = new ApplyPostDTO();
+		
+		model.addAttribute("applyPost", Mapper.toJSON(aPDTO));
+		model.addAttribute("key", Mapper.toJSON(key));
+		model.addAttribute("userId", Mapper.toJSON(user.getId()));
+		return "resultSearchAddress";
 	}
 	
 	
@@ -155,30 +209,47 @@ public class PostController {
 		return new ResponseEntity<List<RecruitmentShowList>>(listShow, HttpStatus.OK);
 	}
 	
-	@GetMapping("/countApplyPostByRecId.json")
+	@GetMapping("/countUserApplyPostByRecId.json")
 	@ResponseBody
-	public ResponseEntity<Long> countApplyPostByRecId(@RequestParam(name = "id", defaultValue = "0") int id) {		
+	public ResponseEntity<Long> countApplyPostByRecId(Principal principal,
+			@RequestParam(name = "recId", defaultValue = "0") int recId) {		
+
+		if(principal != null) {
+			User user = userService.findByEmail(principal.getName());
+			
+			long count = applyPostService.countUserApplyPostByRecId(recId);		
+			return new ResponseEntity<Long>(count, HttpStatus.OK);
+		}
+		return new ResponseEntity<Long>(0L, HttpStatus.OK);
 		
-		long count = applyPostService.countApplyPostByRecId(id);		
-		return new ResponseEntity<Long>(count, HttpStatus.OK);
 	}
 	
-	@GetMapping("/getListApplyPostByRecId.json")
+	@GetMapping("/getListUserApplyPostByRecId.json")
 	@ResponseBody
-	public ResponseEntity<List<ApplyPostDTO>> getListApplyPostByRecId(
-			@RequestParam(name="id", defaultValue = "0") int id,
+	public ResponseEntity<List<ApplyPostDTO>> getListUserApplyPostByRecId(
+			Principal principal,
+			@RequestParam(name="recId", defaultValue = "0") int recId,
 			@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
 			@RequestParam(name="pageSize", defaultValue = "0") int pageSize) {
-		pageNumber = pageNumber - 1;
 		
-		List<ApplyPost> apps = applyPostService.getListApplyPostByRecId(id, pageNumber, pageSize);
+		pageNumber = pageNumber - 1;
 		List<ApplyPostDTO> list = new ArrayList<ApplyPostDTO>();
-		for(ApplyPost a : apps) {
-			ApplyPostDTO appDTO = ApplyPostDTO.setToDTO(a);
-			list.add(appDTO);
+		
+		if(principal != null) {			
+			List<ApplyPost> apps = applyPostService.getListUserApplyPostByRecId(recId, pageNumber, pageSize);
+			
+			for(ApplyPost a : apps) {
+				ApplyPostDTO appDTO = ApplyPostDTO.setToDTO(a);
+				User user = userService.findById(appDTO.getUserId());
+				user.setPassword(null);
+				appDTO.setUser(user);
+				list.add(appDTO);
+			}			
+			return new ResponseEntity<List<ApplyPostDTO>>(list, HttpStatus.OK);
 		}
 		
-		return new ResponseEntity<List<ApplyPostDTO>>(list, HttpStatus.OK);
+		return new ResponseEntity<List<ApplyPostDTO>>(list, HttpStatus.OK); 
+		
 	}
 	
 	@GetMapping("/deletePost.json")
@@ -188,27 +259,17 @@ public class PostController {
 		return new ResponseEntity<String>("OK", HttpStatus.OK);
 	}
 	
-	@GetMapping("/countSearch")
+	@GetMapping("/countListPostSearchJob.json")
 	@ResponseBody
-	public ResponseEntity<Long> countSearch(@RequestParam(name = "key", defaultValue = "") String key) {		
+	public ResponseEntity<Long> countListPostSearchJob(@RequestParam(name = "key", defaultValue = "") String key) {		
 		
 		long count = recruitmentService.countBySearchTitle(key);		
 		return new ResponseEntity<Long>(count, HttpStatus.OK);
 	}
 	
-	@GetMapping("/searchJob")
-	public String pageSearch(Principal principal, Model model,
-			@RequestParam(name="key", defaultValue = "") String key) {
-		User user = userService.findByEmail(principal.getName());
-		
-		model.addAttribute("key", Mapper.toJSON(key));
-		model.addAttribute("userId", Mapper.toJSON(user.getId()));
-		return "resultSearch";
-	}
-	
-    @GetMapping("/searchJobAjax")
+    @GetMapping("/getListPostSearchJob.json")
 	@ResponseBody
-	public ResponseEntity<List<RecruitmentShowList>> postSearch(Principal principal,
+	public ResponseEntity<List<RecruitmentShowList>> getListPostSearchJob(Principal principal,
 			@RequestParam(name="key", defaultValue = "") String key,
 			@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
 			@RequestParam(name="pageSize", defaultValue = "5") int pageSize) {
@@ -228,9 +289,72 @@ public class PostController {
 		return new ResponseEntity<List<RecruitmentShowList>>(listShow, HttpStatus.OK);
 	}
     
+    @GetMapping("/countListPostSearchCompany.json")
+	@ResponseBody
+	public ResponseEntity<Long> countListPostSearchCompany(@RequestParam(name = "key", defaultValue = "") String key) {		
+		
+		long count = recruitmentService.countBySearchCompany(key);		
+		return new ResponseEntity<Long>(count, HttpStatus.OK);
+	}
+	
+    @GetMapping("/getListPostSearchCompany.json")
+	@ResponseBody
+	public ResponseEntity<List<RecruitmentShowList>> getListPostSearchCompany(Principal principal,
+			@RequestParam(name="key", defaultValue = "") String key,
+			@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
+			@RequestParam(name="pageSize", defaultValue = "5") int pageSize) {
+		pageNumber = pageNumber - 1;
+		List<Recruitment> list = recruitmentService.getListBySearchCompany(key, pageNumber, pageSize);
+		List<RecruitmentShowList> listShow = new ArrayList<RecruitmentShowList>();
+		for(Recruitment r : list) {
+			RecruitmentShowList rs = new RecruitmentShowList();
+			rs.setId(r.getId());
+			rs.setTitle(r.getTitle());
+			rs.setAddress(r.getAddress());
+			rs.setCompanyName(r.getCompany().getName());
+			rs.setStatus(r.isStatus());
+			rs.setType(r.getType());
+			listShow.add(rs);
+		}
+		return new ResponseEntity<List<RecruitmentShowList>>(listShow, HttpStatus.OK);
+	}
+    
+    @GetMapping("/countListPostSearchAddress.json")
+	@ResponseBody
+	public ResponseEntity<Long> countListPostSearchAddress(@RequestParam(name = "key", defaultValue = "") String key) {		
+		
+		long count = recruitmentService.countBySearchAddress(key);		
+		return new ResponseEntity<Long>(count, HttpStatus.OK);
+	}
+	
+    @GetMapping("/getListPostSearchAddress.json")
+	@ResponseBody
+	public ResponseEntity<List<RecruitmentShowList>> getListPostSearchAddress(Principal principal,
+			@RequestParam(name="key", defaultValue = "") String key,
+			@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
+			@RequestParam(name="pageSize", defaultValue = "5") int pageSize) {
+		pageNumber = pageNumber - 1;
+		List<Recruitment> list = recruitmentService.getListBySearchAddress(key, pageNumber, pageSize);
+		List<RecruitmentShowList> listShow = new ArrayList<RecruitmentShowList>();
+		for(Recruitment r : list) {
+			RecruitmentShowList rs = new RecruitmentShowList();
+			rs.setId(r.getId());
+			rs.setTitle(r.getTitle());
+			rs.setAddress(r.getAddress());
+			rs.setCompanyName(r.getCompany().getName());
+			rs.setStatus(r.isStatus());
+			rs.setType(r.getType());
+			listShow.add(rs);
+		}
+		return new ResponseEntity<List<RecruitmentShowList>>(listShow, HttpStatus.OK);
+	}
+    
+    
+    
     @GetMapping("/checkFollowAndApplyPost.json")
 	@ResponseBody
-	public ResponseEntity<FollowAndApplyPost> checkFollowAndApplyPost(@RequestParam(name = "userId", defaultValue = "0") int userId,
+	public ResponseEntity<FollowAndApplyPost> checkFollowAndApplyPost(
+			@RequestParam(name = "userId", defaultValue = "0") int userId,
 			@RequestParam(name = "recId", defaultValue = "0") int recId) {
 		Boolean isFollow = saveJobService.checkExistFollow(userId, recId);
 		Boolean isApply = applyPostService.checkExistApply(userId, recId);

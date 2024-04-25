@@ -98,9 +98,7 @@
 	                    </label>
 	                </div>
 	                <div style="margin-left: 0px" id="divImage" >
-	                	<img v-if="user.image && user.image !== ''" src="${pageContext.request.contextPath}/assets/images/bg_1.jpg" alt="Selected Image"
-	                     id="avatar" height="100" width="100" style="border-radius: 50px" >
-	                    <img v-if="user.image && user.image !== ''" :src="user.image_user_url" alt="Selected Image"
+	                    <img v-if="user.image && user.image !== ''" :src='"${pageContext.request.contextPath}/assets/images/uploads/" + user.image' alt="Selected Image"
 	                     id="avatar" height="100" width="100" style="border-radius: 50px" >
 	                     <img v-else="user.image && user.image !== ''" id="avatar" height="100" width="100" style="border-radius: 50px" >
 	                </div>
@@ -123,9 +121,9 @@
 	                            </label>
 	                        </div>
 	                    </div>
-	                    <span v-if="pdfFile" class="float-left mr-5 mt-2">{{ pdfFileName }}</span>
-	                	<button type="button" class="btn btn-info btn-md" id="nameCv" @click="viewCV()">Xem cv</button>
-	                	<button type="button" class="btn btn-danger btn-md" id="nameCv" @click="deleteCV()">Xóa cv</button>
+	                    <span class="float-left mr-5 mt-2">{{ cvName }}</span>
+	                	<button v-if="cvName" type="button" class="btn btn-info btn-md" id="nameCv" @click="viewCV()">Xem cv</button>
+	                	<button v-if="cvName" type="button" class="btn btn-danger btn-md" id="nameCv" @click="deleteCV()">Xóa cv</button>
 	                </div>		                
 	            </div>
 	        </form>
@@ -254,11 +252,12 @@
 	                    <label for="company-website-tw d-block1">Cập nhật Logo</label> <br>
 	                    <label class="btn btn-primary btn-md btn-file">
 	                        Chọn logo
+	                        
 	                        <input type="file" name="file" id="fileUpload" hidden @change="checklogo($event)">
 	                    </label>
 	                    
 	                    <div style="margin-left: 0px" id="divImage" >
-		                    <img v-if="company.logo" :src="company.logoUrl" alt="Selected Image"
+		                    <img v-if="company.logo" :src='"${pageContext.request.contextPath}/assets/images/uploads/" + company.logo' alt="Selected Image"
 		                     id="avatar" height="100" width="100" style="border-radius: 50px" >
 		                     <img v-if="!company.logo" id="avatar" height="100" width="100" style="border-radius: 50px" >
 		                </div>
@@ -291,9 +290,9 @@
 	                                </div>
 	
 									<div style="margin-left: 0px" id="divImage" >
-					                    <img v-if="company.logo" :src="company.logoUrl" alt="Selected Image"
-					                     id="avatar" height="100" width="100" style="border-radius: 50px" >
-					                     <img v-if="!company.logo" id="avatar" height="100" width="100" style="border-radius: 50px" >
+					                    <img v-if="company.logo" :src='"${pageContext.request.contextPath}/assets/images/uploads/" + company.logo' alt="Selected Image"
+		                     id="avatar" height="100" width="100" style="border-radius: 50px" >
+		                     <img v-if="!company.logo" id="avatar" height="100" width="100" style="border-radius: 50px" >
 					                </div>
 	                                
 	                                <div class="row form-group mt-3" >

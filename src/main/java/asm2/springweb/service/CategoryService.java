@@ -1,8 +1,11 @@
 package asm2.springweb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,4 +25,15 @@ public class CategoryService {
 	public Category findById(int id) {
 		return repo.getOne(id);
 	}
+	
+	public List<Category> findCategoriesWithRecruitmentCount() {
+        Pageable pageable = PageRequest.of(0, 4);
+        List<Object[]> results = repo.findCategoriesWithRecruitmentCount(pageable);
+        List<Category> categories = new ArrayList<>();
+        for (Object[] result : results) {
+        	Category category = new Category((Category) result[0], ((Number) result[1]).intValue());
+            categories.add(category);
+        }
+        return categories;
+    }
 }

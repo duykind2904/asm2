@@ -37,10 +37,21 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Intege
             nativeQuery = true)
 	int countRecruitmenting(@Param("id") int id);
 	
-	@Query("SELECT COUNT(r) FROM Recruitment r WHERE r.title LIKE %:key%")
+	@Query("SELECT COUNT(r) FROM Recruitment r WHERE UPPER(r.title) LIKE UPPER(CONCAT('%', :key, '%'))")
 	long countBySearchTitle(@Param("key") String key);
 	
-	@Query("SELECT r FROM Recruitment r WHERE r.title LIKE %:key%")
+	@Query("SELECT r FROM Recruitment r WHERE UPPER(r.title) LIKE UPPER(CONCAT('%', :key, '%'))")
 	Page<Recruitment> getListBySearchTitle(@Param("key") String key, Pageable pageable);
 	
+	@Query("SELECT COUNT(r) FROM Recruitment r JOIN r.company c WHERE UPPER(c.name) LIKE UPPER(CONCAT('%', :key, '%'))")
+	long countBySearchCompany(@Param("key") String key);
+	
+	@Query("SELECT r FROM Recruitment r JOIN r.company c WHERE UPPER(c.name) LIKE UPPER(CONCAT('%', :key, '%'))")
+	Page<Recruitment> getListBySearchCompany(@Param("key") String key, Pageable pageable);
+	
+	@Query("SELECT COUNT(r) FROM Recruitment r WHERE UPPER(r.address) LIKE UPPER(CONCAT('%', :key, '%'))")
+	long countBySearchAddress(@Param("key") String key);
+	
+	@Query("SELECT r FROM Recruitment r WHERE UPPER(r.address) LIKE UPPER(CONCAT('%', :key, '%'))")
+	Page<Recruitment> getListBySearchAddress(@Param("key") String key, Pageable pageable);
 }

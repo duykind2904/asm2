@@ -1,15 +1,24 @@
 const app = new Vue({
   el: '#app',
   data: {
+	userId: window.userId,
     url: window.url,
     rec: window.recruitment,
+    userRole: window.userRole,
+    applyPost: window.applyPost,
     
-    listApplyPost: [],
+    listUserApplyPost: [],
     totalCount: 0,
     pageTotal: 0,
     pageNumber: 1,
-    pageSize: 2,    
+    pageSize: 6,    
     activeIndex: -1,
+    
+    isFollow: false,
+    isApply: false,
+    
+    selectionOption: '',
+	fileCV: null,
     
   },
   
@@ -18,33 +27,151 @@ const app = new Vue({
 			if (document.readyState == "complete") {
 				console.log(app.rec);
 				
-				app.totalCount = await countApplyPostByRecId(app.rec.id).done();
+				app.totalCount = await countUserApplyPostByRecId(app.rec.id).done();
 				if(app.totalCount > 0) {
-					app.listApplyPost = await getListApplyPostByRecId(app.rec.id, app.pageNumer, app.pageSize).done();
+					app.listUserApplyPost = await getListUserApplyPostByRecId(app.rec.id, app.pageNumber, app.pageSize).done();
 					this.activeIndex = 1;
-					if(app.totalCount % app.pageSize > 0) {
-						app.pageTotal = app.listPost.length / app.pageSize + 1;
-					} else {
-						app.pageTotal = app.listPost.length / app.pageSize;
-					}
+					app.pageTotal = Math.floor(app.totalCount / app.pageSize) + (app.totalCount % app.pageSize > 0 ? 1 : 0);
+				}
+				
+				if(app.userId > 0) {
+					await checkFollowAndApplyPost(app.userId, app.rec.id).then((response) => {
+						if(response) {
+							app.isFollow = response.follow;
+							app.isApply = response.apply;
+						}
+					});					
 				}
 			}
 		}
 	},
 
 	methods: {
+		async getPage(index) {
+			this.activeIndex = index;
+			app.pageNumber = index;
+			app.listUserApplyPost = await getListUserApplyPostByRecId(app.rec.id, app.pageNumber, app.pageSize).done();
+		},
 		
+		viewCV(user) {
+			if(user.cvName) {
+				const cvUrl = `${this.url}/assets/images/uploads/${user.cvName}`;
+		    	window.open(cvUrl, '_blank');
+			} else {
+				swal('Không có CV cho ứng viên ' + user.fullName);
+			}
+			
+		},
+		
+		accessCV(applyPost) {
+			updateStatusApplyPost(applyPost.userId, applyPost.recruitmentId, true);			
+			
+			const index = app.listUserApplyPost.findIndex(item => item.userId === applyPost.userId);
+			if (index !== -1) {
+			    app.listUserApplyPost[index].status = true;
+			}
+			
+		},
+		
+		folowRecuitment(check) {
+			if (app.userId > 0) {
+				saveFollowPost(app.userId, app.rec.id, check);
+				app.isFollow = check;
+			} else {
+				swal({
+					title: "Bạn chưa đăng nhập",
+					text: "Đến trang đăng nhập?",
+					icon: "warning",
+					buttons: {
+						cancel: "Hủy",
+						confirm: "OK"
+					},
+				}).then((value) => {
+					if (value) {
+						window.location.href = this.url + "/auth/login";
+					}
+				});
+			}
+		},
+		
+		openModalApplyPost() {
+			if (app.userId > 0) {
+				$('#exampleModal').modal('show');
+			} else {
+				swal({
+					title: "Bạn chưa đăng nhập",
+					text: "Đến trang đăng nhập?",
+					icon: "warning",
+					buttons: {
+						cancel: "Hủy",
+						confirm: "OK"
+					},
+				}).then((value) => {
+					if (value) {
+						window.location.href = this.url + "/auth/login";
+					}
+				});
+			}
+		},
+		
+		checkPdf(event) {
+			const file = event.target.files[0];
 
+			if (file.type === 'application/pdf') {
+				app.fileCV = file;
+			} else {
+				swal("Vui lòng chọn một tập tin PDF.");
+			}
+		},
+		
+		async handleApplyPost() {
+		  if (app.userId > 0) {
+			  app.applyPost.userId = app.userId;
+			  app.applyPost.recruitmentId = app.rec.id;
 
+			  
+			  if (app.selectionOption == 1) {
+				  let fileNameCV = await getFileNameCV(app.userId).done();
+				  if (fileNameCV.trim()) {
+					  app.applyPost.nameCV = fileNameCV;
+				  } else {
+					  swal("Bạn chưa có file CV. Vui lòng cập nhật file CV của bạn");
+					  return;
+				  }
+			  } else {
+				  app.applyPost.nameCV = await saveFile(app.fileCV).done();
+			  }
+
+			  await saveApplyPost(app.applyPost).done();
+			  swal("Nộp đơn ứng tuyển thành công");
+			  app.isApply = true;
+
+		  } else {
+			  swal({
+				  title: "Bạn chưa đăng nhập",
+				  text: "Đến trang đăng nhập?",
+				  icon: "warning",
+				  buttons: {
+					  cancel: "Hủy",
+					  confirm: "OK"
+				  },
+			  }).then((value) => {
+				  if (value) {
+					  window.location.href = this.url + "/auth/login";
+				  }
+			  });
+		  }
+
+		}
 	}, 
    
 });
 
-function countApplyPostByRecId(id) {
+function countUserApplyPostByRecId(recId) {
 	return $.ajax({
-		url: `${window.url}/post/countApplyPostByRecId.json`,
+		url: `${window.url}/post/countUserApplyPostByRecId.json`,
 		data: {
-			id: id,
+			recId: recId,
 		},
 		cache: false,
 		method: 'GET',
@@ -52,11 +179,11 @@ function countApplyPostByRecId(id) {
 	});
 }
 
-function getListApplyPostByRecId(id, pageNumber, pageSize) {
+function getListUserApplyPostByRecId(recId, pageNumber, pageSize) {
 	return $.ajax({
-		url: `${window.url}/post/getListApplyPostByRecId.json`,
+		url: `${window.url}/post/getListUserApplyPostByRecId.json`,
 		data: {
-			id: id,
+			recId: recId,
 			pageNumber: pageNumber,
 			pageSize: pageSize,
 		},
@@ -66,136 +193,89 @@ function getListApplyPostByRecId(id, pageNumber, pageSize) {
 	});
 }
 
-/*function deletePost(id) {
+function updateStatusApplyPost(userId, recId, isStatus) {
 	return $.ajax({
-		url: `${window.url}/post/deletePost.json`,
+		url: `${window.url}/applyPost/updateStatusApplyPost.json`,
 		data: {
-			id: id,
+			userId: userId,
+			recId: recId,
+			isStatus: isStatus,
 		},
 		cache: false,
 		method: 'GET',
 		type: 'GET'
 	});	
-}*/
+}
 
-/*function apply(id){
-    var name = "#idRe" +id;
-    var nameModal = "#exampleModal" +id;
-    var nameFile = "#fileUpload"+id;
-    var nameText = "#text" +id;
-    var idRe = $(name).val();
-    var textvalue = $(nameText).val();
-    var fileUpload = $(nameFile).get(0);
-    var files = fileUpload.files;
-    var formData = new FormData();
-    formData.append('file', files[0]);
-    formData.append('idRe', idRe);
-    formData.append('text', textvalue);
-    if(files[0] == null){
-        swal({
-            title: 'Bạn cần phải chọn cv!',
-             text: 'Redirecting...', 
-            icon: 'error',
-            timer: 3000,
-            buttons: true,
-            type: 'error'
-        })
-    } else {
-        $.ajax(
-            {
-                type: 'POST',
-                url: '/user/apply-job/',
-                contentType: false,
-                processData: false,
-                data: formData,
-                success: function (data) {
-                    if(data == "false"){
-                        swal({
-                            title: 'Bạn cần phải đăng nhập!',
-                             text: 'Redirecting...', 
-                            icon: 'error',
-                            timer: 3000,
-                            buttons: true,
-                            type: 'error'
-                        })
-                    }else if(data == "true"){
-                        swal({
-                            title: 'Ứng tuyển thành công!',
-                             text: 'Redirecting...', 
-                            icon: 'success',
-                            timer: 3000,
-                            buttons: true,
-                            type: 'success'
-                        })
-                        $(nameModal).modal('hide');
-                        $('#fileUpload').val("");
-                    }else{
-                        swal({
-                            title: 'Bạn đã ứng tuyển công việc này!',
-                             text: 'Redirecting...', 
-                            icon: 'error',
-                            timer: 3000,
-                            buttons: true,
-                            type: 'error'
-                        })
-                        $(nameModal).modal('hide');
-                        $('#fileUpload').val("");
-                    }
-                },
-                error: function (err) {
-                    alert(err);
-                }
-            }
-        )
-    }
+function checkFollowAndApplyPost(userId, recId) {
+	return $.ajax({
+		url: `${window.url}/post/checkFollowAndApplyPost.json`,
+		data: {
+			userId: userId,
+			recId: recId,
+		},
+		cache: false,
+		method: 'GET',
+		type: 'GET'
+	});
+}
 
-}*/
+function saveFollowPost(userId, recId, isFollow) {
+	return $.ajax({
+		url: `${window.url}/post/handleFollowPost.json`,
+		data: {
+			userId: userId,
+			recId: recId,
+			isFollow: isFollow,
+		},
+		cache: false,
+		method: 'GET',
+		type: 'GET'
+	});
+}
 
-/*function save(id){
-    var name = "#idRe" +id;
-    var idRe = $(name).val();
-    var formData = new FormData();
-    formData.append('idRe', idRe);
-    $.ajax(
-        {
-            type: 'POST',
-            url: '/save-job/save/',
-            contentType: false,
-            processData: false,
-            data: formData,
-            success: function (data) {
-                if(data == "false"){
-                    swal({
-                        title: 'Bạn cần phải đăng nhập!',
-                         text: 'Redirecting...', 
-                        icon: 'error',
-                        timer: 3000,
-                        buttons: true,
-                        type: 'error'
-                    })
-                }else if(data == "true"){
-                    swal({
-                        title: 'Lưu thành công!',
-                         text: 'Redirecting...', 
-                        icon: 'success',
-                        timer: 3000,
-                        buttons: true,
-                        type: 'success'
-                    })
-                }else{
-                    swal({
-                        title: 'Bạn đã lưu bài này rồi!',
-                         text: 'Redirecting...', 
-                        icon: 'error',
-                        timer: 3000,
-                        buttons: true,
-                        type: 'error'
-                    })
-                }
-            },
-            error: function (err) {
-                alert(err);
-            }
-        }
-    )
-}*/
+function getFileNameCV(userId) {
+	return $.ajax({
+		url: `${window.url}/post/getFileNameCVByUserId.json`,
+		data: {
+			userId: userId,
+		},
+		cache: false, 
+		method: 'GET'
+	});
+}
+
+function saveFile(file) {
+	var formData = new FormData();
+	formData.append('file', file);
+	return $.ajax({
+		url: `${window.url}/file/saveFile.json`,
+		type: 'POST',
+        data: formData, 
+        processData: false, 
+        contentType: false, 
+	});
+}
+
+function saveApplyPost(applyPost) {
+	return $.ajax({
+		url: `${window.url}/applyPost/saveApplyPost.json`, 
+		data: JSON.stringify(applyPost),
+		cache: false,
+		contentType: 'application/json',
+		processData: false,
+		method: 'POST',
+		type: 'POST'
+	});	
+}
+
+
+
+
+
+
+
+
+
+
+

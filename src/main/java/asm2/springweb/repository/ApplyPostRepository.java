@@ -11,11 +11,11 @@ import asm2.springweb.entity.ApplyPostId;
 
 public interface ApplyPostRepository extends JpaRepository<ApplyPost, ApplyPostId>{
 	
-	@Query("SELECT COUNT(a) FROM ApplyPost a WHERE a.recruitment.id = :id")
-	long countApplyPostByRecId(@Param("id") int id);
+	@Query("SELECT COUNT(a) FROM ApplyPost a WHERE a.recruitment.id = :recId")
+	long countUserApplyPostByRecId(@Param("recId") int recId);
 	
-	@Query("SELECT a FROM ApplyPost a WHERE a.recruitment.id = :id")
-	Page<ApplyPost> getListApplyPostByRecId(@Param("id") int id, Pageable pageable);
+	@Query("SELECT a FROM ApplyPost a LEFT JOIN a.user u LEFT JOIN a.recruitment r WHERE a.recruitment.id = :recId")
+	Page<ApplyPost> getListUserApplyPostByRecId(@Param("recId") int recId, Pageable pageable);
 	
 	@Query("SELECT COUNT(a) FROM ApplyPost a WHERE a.user.id = :userId AND a.recruitment.id = :recId")
 	long checkExist(@Param("userId") int userId, @Param("recId") int recId);

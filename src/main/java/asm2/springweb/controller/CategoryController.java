@@ -24,9 +24,10 @@ public class CategoryController {
 		return new ResponseEntity<List<Category>>(categoryService.findAll(), HttpStatus.OK);
 	}
 	
-//	@GetMapping("/getCategory.json")
-//	@ResponseBody
-//	public List<Category> findAll() {
-//		return categoryService.findAll();
-//	}
+	@GetMapping("/findCategoriesWithRecruitmentCount.json")
+	@ResponseBody
+	public ResponseEntity<List<Category>> findCategoriesWithRecruitmentCount() {
+		List<Category> cs = categoryService.findCategoriesWithRecruitmentCount();
+		return new ResponseEntity<List<Category>>(cs, HttpStatus.OK);
+	}
 }

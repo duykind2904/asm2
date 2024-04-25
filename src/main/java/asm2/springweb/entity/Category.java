@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="category")
@@ -17,6 +18,19 @@ public class Category {
 	
 	@Column(name="name")
 	private String name;
+	
+	@Transient
+	private int number;
+	
+	public Category() {
+    }
+	
+	public Category(Category category, int number) {
+		this.id = category.getId();
+		this.name = category.getName();
+		this.number = number;
+	}
+	
 
 	public int getId() {
 		return id;
@@ -33,6 +47,15 @@ public class Category {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+	
 	
 	
 }

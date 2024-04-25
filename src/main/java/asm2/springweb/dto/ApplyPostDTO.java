@@ -22,12 +22,12 @@ public class ApplyPostDTO {
 	
 	public static ApplyPostDTO setToDTO(ApplyPost app) {
 		ApplyPostDTO appDTO = new ApplyPostDTO();
-		appDTO.setCreatedAt(app.getCreatedAt());
-		appDTO.setNameCV(app.getNameCV());
-		appDTO.setStatus(app.isStatus());
-		appDTO.setText(app.getText());
-		appDTO.setRecruitmentId(app.getId().getRecruitmentId());
-		appDTO.setUserId(app.getId().getUserId());
+		if(app.getCreatedAt() != null) appDTO.setCreatedAt(app.getCreatedAt());
+		if(app.getNameCV() != null) appDTO.setNameCV(app.getNameCV());
+		if(app.isStatus() != null)  appDTO.setStatus(app.isStatus());
+		if(app.getText() != null) appDTO.setText(app.getText());
+		if(app.getId() != null) appDTO.setRecruitmentId(app.getId().getRecruitmentId());
+		if(app.getId() != null) appDTO.setUserId(app.getId().getUserId());
 		
 		return appDTO;
 	}
@@ -38,7 +38,9 @@ public class ApplyPostDTO {
 		if(aPDTO.getRecruitment() != null) aP.setRecruitment(aPDTO.getRecruitment());
 		if(aPDTO.getNameCV() != null ) aP.setNameCV(aPDTO.getNameCV());
 		if(aPDTO.getText() != null) aP.setText(aPDTO.getText());
-		if(aPDTO.isStatus() != null) aP.setStatus(aPDTO.isStatus());
+		if(aPDTO.isStatus() != null) aP.setStatus(aPDTO.isStatus());		
+		aP.setId(aP.getUser().getId(), aP.getRecruitment().getId());
+		
 		return aP;
 	}
 	

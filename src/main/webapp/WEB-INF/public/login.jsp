@@ -176,11 +176,8 @@
 
 
 <script type="text/javascript">
-	window.user = ${user};  
-	window.save_user = '${pageContext.request.contextPath}/auth/register';
-	window.getRole_url = '${pageContext.request.contextPath}/auth/getRole.json';
-	window.checkEmail_url = '${pageContext.request.contextPath}/auth/checkEmail.json';
-	console.log("url save_user = " + '${pageContext.request.contextPath}/auth/checkEmail.json');
+	window.user = ${user};
+	window.url = '${pageContext.request.contextPath}';
 </script>
 <script src="<c:url value='/assets/js/export/login.js' /> "></script>
 

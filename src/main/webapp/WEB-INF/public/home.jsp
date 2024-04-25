@@ -166,7 +166,7 @@
                                                 <div class="col-md">
                                                     <div class="form-group">
                                                         <div class="form-field">
-                                                            <button type="submit" @click="handleJobSearch()" class="form-control btn btn-primary">Tìm kiếm</button>
+                                                            <button type="button" @click="handleJobSearch()" class="form-control btn btn-primary">Tìm kiếm</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -242,14 +242,17 @@
             </div>
         </div>
         <div class="row">
-            <th:block th:each="categorie : ${categories}">
-            <div class="col-md-3 ">
+            <div class="col-md-3" v-for="(c, index) in categories" :key="index">
                 <ul class="category text-center">
-
-                    <li><a style="text-decoration: none !important;" th:href="${'/recruitment/category/'}+${categorie.id}"> <p th:text="${categorie.name}"></p><span class="number" th:text="${categorie.numberChoose}"></span> <span>Vị trí</span><i class="ion-ios-arrow-forward"></i></a></li>
+                    <li>
+                    	<a style="text-decoration: none !important;" href="#"> 
+                    		<p> {{c.name}}</p>
+                    		<span class="number">{{c.number}}</span> <span>Vị trí</span>
+                    		<i class="ion-ios-arrow-forward"></i>
+                    	</a>
+                    </li>
                 </ul>
             </div>
-            </th:block>
         </div>
     </div>
 </section>
@@ -376,7 +379,7 @@
 
                                             </div>
                                             <div class="modal-footer">
-                                            	<button type="button" @click="handleApplyPost(rec.id)" v-if="selectionOption !== ''" class="btn btn-primary">Nộp</button>
+                                            	<button type="button" @click="handleApplyPost(rec.id)" v-if="selectionOption !== ''" data-dismiss="modal" class="btn btn-primary">Nộp</button>
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                                             </div>
                                         </div>

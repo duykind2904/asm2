@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import asm2.springweb.entity.ApplyPost;
+import asm2.springweb.entity.ApplyPostId;
+import asm2.springweb.entity.User;
 import asm2.springweb.repository.ApplyPostRepository;
 
 @Service
@@ -17,13 +19,13 @@ public class ApplyPostService {
 
 	@Autowired private ApplyPostRepository repo;
 	
-	public long countApplyPostByRecId(int id) {
-		return repo.countApplyPostByRecId(id);
+	public long countUserApplyPostByRecId(int recId) {
+		return repo.countUserApplyPostByRecId(recId);
 	}
 
-	public List<ApplyPost> getListApplyPostByRecId(int id, int pageNumber, int pageSize) {
+	public List<ApplyPost> getListUserApplyPostByRecId(int recId, int pageNumber, int pageSize) {
 		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
-		Page<ApplyPost> page = repo.getListApplyPostByRecId(id, pageable);
+		Page<ApplyPost> page = repo.getListUserApplyPostByRecId(recId, pageable);
 	    return page.getContent();
 	}
 	
@@ -31,8 +33,15 @@ public class ApplyPostService {
 		repo.save(app);
 	}
 	
-	public boolean checkExistApply(int userId, int companyId) {
-		long count = repo.checkExist(userId, companyId);
+	public boolean checkExistApply(int userId, int recId) {
+		long count = repo.checkExist(userId, recId);
 		return count > 0 ? true : false;
+	}
+	
+	public void updateStatusApplyPost(int userId, int recId, boolean isStatus) {
+		ApplyPostId id = new ApplyPostId(recId, userId);
+		ApplyPost applyPostToUpdate = repo.getOne(id);
+		applyPostToUpdate.setStatus(isStatus);
+        repo.save(applyPostToUpdate);
 	}
 }
