@@ -19,6 +19,14 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Intege
 			+ "WHERE u.email = :email")
 	long countByEmailUser(@Param("email") String email);
 	
+	@Query("SELECT r FROM Recruitment r JOIN r.company c WHERE c.id = :companyId")
+	Page<Recruitment> getListByCompanyId(@Param("companyId") int companyId, Pageable pageable);
+	
+	@Query("SELECT COUNT(r) FROM Recruitment r "
+			+ "JOIN r.company c "
+			+ "WHERE c.id = :companyId")
+	long countByCompanyId(@Param("companyId") int companyId);
+	
 	
 	@Query(value = "SELECT r.* FROM Recruitment r "
             + "JOIN (SELECT ap.recruitment_id, COUNT(*) as countApply "
@@ -54,4 +62,20 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Intege
 	
 	@Query("SELECT r FROM Recruitment r WHERE UPPER(r.address) LIKE UPPER(CONCAT('%', :key, '%'))")
 	Page<Recruitment> getListBySearchAddress(@Param("key") String key, Pageable pageable);
+	
+	@Query("SELECT count(r) FROM Recruitment r "
+			+ "WHERE id in (SELECT a.recruitment.id FROM ApplyPost a WHERE a.user.id = :userId)")
+	long countByApplyPost(@Param("userId") int userId);
+	
+	@Query("SELECT r FROM Recruitment r "
+			+ "WHERE id in (SELECT a.recruitment.id FROM ApplyPost a WHERE a.user.id = :userId)")
+	Page<Recruitment> getListByApplyPost(@Param("userId") int userId, Pageable pageable);
+	
+	@Query("SELECT count(r) FROM Recruitment r "
+			+ "WHERE id in (SELECT s.recruitment.id FROM SaveJob s WHERE s.user.id = :userId)")
+	long countByFollow(@Param("userId") int userId);
+	
+	@Query("SELECT r FROM Recruitment r "
+			+ "WHERE id in (SELECT s.recruitment.id FROM SaveJob s WHERE s.user.id = :userId)")
+	Page<Recruitment> getListByFollow(@Param("userId") int userId, Pageable pageable);
 }

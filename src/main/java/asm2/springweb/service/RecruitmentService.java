@@ -33,6 +33,16 @@ public class RecruitmentService {
 //		return repo.getListByEmailUser(email, pageNumber, pageSize);
 	}
 	
+	public long countListByCompanyId(int companyId) {
+		return repo.countByCompanyId(companyId);
+	}
+	
+	public List<Recruitment> getListByCompanyId(int companyId, int pageNumber, int pageSize) {
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		Page<Recruitment> recruitmentPage = repo.getListByCompanyId(companyId, pageable);
+	    return recruitmentPage.getContent();
+	}
+	
 	public Recruitment findById(int id) {
 		Optional<Recruitment> r = repo.findById(id);
 		return r.get();
@@ -79,6 +89,26 @@ public class RecruitmentService {
 	public List<Recruitment> getListBySearchAddress(String key, int pageNumber, int pageSize) {
 		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
 		Page<Recruitment> recruitmentPage = repo.getListBySearchAddress(key, pageable);
+		return recruitmentPage.getContent();
+	}
+	
+	public long countByApplyPost(int userId) {
+		return repo.countByApplyPost(userId);
+	}
+	
+	public List<Recruitment> getListByApplyPost(int userId, int pageNumber, int pageSize) {
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		Page<Recruitment> recruitmentPage = repo.getListByApplyPost(userId, pageable);
+		return recruitmentPage.getContent();
+	}
+	
+	public long countByFollow(int userId) {
+		return repo.countByFollow(userId);
+	}
+	
+	public List<Recruitment> getListByFollow(int userId, int pageNumber, int pageSize) {
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		Page<Recruitment> recruitmentPage = repo.getListByFollow(userId, pageable);
 		return recruitmentPage.getContent();
 	}
 

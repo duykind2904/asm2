@@ -171,7 +171,7 @@ const app = new Vue({
 
 });
 
-async function setRecuiment(recs) {
+/*async function setRecuiment(recs) {
 	const processedRecs = await Promise.all(
 		recs.map(async (rec) => {
 			const response = await checkFollowAndApplyPost(app.userId, rec.id);
@@ -196,7 +196,7 @@ function checkFollowAndApplyPost(userId, recId) {
 		method: 'GET',
 		type: 'GET'
 	});
-}
+}*/
 
 function countListPostSearchJob(key) {
 	return $.ajax({
@@ -224,7 +224,7 @@ function getListPostSearchJob(key, pageNumber, pageSize) {
 	});
 }
 
-function saveFollowPost(userId, recId, isFollow) {
+/*function saveFollowPost(userId, recId, isFollow) {
 	return $.ajax({
 		url: `${window.url}/post/handleFollowPost.json`,
 		data: {
@@ -294,7 +294,7 @@ function saveApplyPost(applyPost) {
 		method: 'POST',
 		type: 'POST'
 	});	
-}
+}*/
 
 
 

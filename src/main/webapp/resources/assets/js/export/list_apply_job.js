@@ -1,31 +1,30 @@
 const app = new Vue({
-  el: '#app',
-  data: {
-    url: window.url,
-    userId: window.userId,
-    companyId: window.companyId,
-    applyPost: window.applyPost,
-    recs: [],
-    totalCount: 0,
-    pageTotal: 0,
-    pageNumber: 1,
-    pageSize: 5,
-    
-    activeIndex: -1,
-    
-    selectionOption: '',
-	fileCV: null,
-    
-  },
-  
+	el: '#app',
+	data: {
+		userId: window.userId,
+		url: window.url,
+		applyPost: window.applyPost,
+
+		recs: [],
+		selectionOption: '',
+		fileCV: null,
+
+		totalCount: 0,
+		pageTotal: 0,
+		pageNumber: 1,
+		pageSize: 5,
+		activeIndex: -1,
+		keySearch: '',
+	},
+
 	mounted() {
 		document.onreadystatechange = async () => {
 			if (document.readyState == "complete") {
-				app.totalCount = await countListPostByCompanyId(app.companyId).done();
-				if(app.totalCount > 0) {
-					await getListPostByCompanyId(app.companyId, app.pageNumber, app.pageSize)
+				app.totalCount = await countByApplyPost().done();
+				if (app.totalCount > 0) {
+					await getListByApplyPost(app.pageNumber, app.pageSize)
 						.then((response) => {
-							return setRecuiment(response); // Trả về một promise từ hàm setRecuiment
+							return setRecuiment1(response); // Trả về một promise từ hàm setRecuiment
 						})
 						.then((result) => {
 							app.recs = result;
@@ -38,19 +37,18 @@ const app = new Vue({
 						.catch((error) => {
 							console.error(error);
 						});
-							
 				}
-				
+
 			}
 		}
 	},
 
 	methods: {
 		async getPage(index) {
-			app.activeIndex = index;
+			this.activeIndex = index;
 			app.pageNumber = index;
-			await getListPostByCompanyId(app.companyId, app.pageNumber, app.pageSize).done((response) => {
-				setRecuiment(response).then((result) => {
+			await getListByApplyPost(app.pageNumber, app.pageSize).done((response) => {
+				setRecuiment1(response).then((result) => {
 					app.recs = result;
 				})
 					.catch((error) => {
@@ -60,12 +58,10 @@ const app = new Vue({
 			});
 		},
 		
-		async deletePost(id) {
-			var OK = await deletePost(id).done();
-			app.recs = app.recs.filter(item => item.id !== id);
-			$('#exampleModal-' + id).modal('hide');
+		handleJobSearch() {
+			window.location.href = this.url + "/post/searchJob?key=" + app.keySearch;
 		},
-		
+
 		folowRecuitment(recId, isFollow) {
 			if (app.userId > 0) {
 				var rec = app.recs.find(item => item.id === recId);
@@ -94,9 +90,18 @@ const app = new Vue({
 				});
 			}
 		},
+		
+		viewCV() {
+			const cvUrl = `${this.url}/assets/images/uploads/${app.applyPost.nameCV}`;
+		    window.open(cvUrl, '_blank');
+		},
 
-		openModalApplyPost(recId) {
+		async openModalApplyPost(rec) {
 			if (app.userId > 0) {
+				//app.applyPost = await getApplyPostByRecIdAndUserId(app.userId, recId);
+				app.applyPost = rec.applyPost;
+				app.selectionOption = 1;
+				
 				$(`#exampleModal-${recId}`).modal('show');
 			} else {
 				swal({
@@ -120,6 +125,7 @@ const app = new Vue({
 
 			if (file.type === 'application/pdf') {
 				app.fileCV = file;
+				app.applyPost.nameCV = file.name;
 			} else {
 				swal("Vui lòng chọn một tập tin PDF.");
 			}
@@ -170,62 +176,25 @@ const app = new Vue({
 
 	  }
 
+	},
 
-	}, 
-   
 });
 
-function countListPostByCompanyId(companyId) {
-	return $.ajax({
-		url: `${window.url}/post/countListPostByCompanyId.json`,
-		data: {
-			companyId: companyId,
-		},
-		cache: false,
-		method: 'GET',
-		type: 'GET'
-	});
-}
-
-function getListPostByCompanyId(companyId, pageNumber, pageSize) {
-	return $.ajax({
-		url: `${window.url}/post/getListPostByCompanyId.json`,
-		data: {
-			companyId: companyId,
-			pageNumber: pageNumber,
-			pageSize: pageSize,
-		},
-		cache: false,
-		method: 'GET',
-		type: 'GET'
-	});
-}
-
-function deletePost(id) {
-	return $.ajax({
-		url: `${window.url}/post/deletePost.json`,
-		data: {
-			id: id,
-		},
-		cache: false,
-		method: 'GET',
-		type: 'GET'
-	});	
-}
-
-/*async function setRecuiment(recs) {
+async function setRecuiment1(recs) {
 	const processedRecs = await Promise.all(
 		recs.map(async (rec) => {
 			const response = await checkFollowAndApplyPost(app.userId, rec.id);
+			const responseApplyPost = await getApplyPostByRecIdAndUserId(app.userId, rec.id);
 			return {
 				...rec,
 				isFollow: response.follow,
 				isApply: response.apply,
+				applyPost: responseApplyPost,
 			};
 		})
 	);
 	return processedRecs;
-}*/
+}
 
 /*function checkFollowAndApplyPost(userId, recId) {
 	return $.ajax({
@@ -239,6 +208,28 @@ function deletePost(id) {
 		type: 'GET'
 	});
 }*/
+
+function countByApplyPost() {
+	return $.ajax({
+		url: `${window.url}/post/countByApplyPost.json`,
+		cache: false,
+		method: 'GET',
+		type: 'GET'
+	});
+}
+
+function getListByApplyPost(pageNumber, pageSize) {
+	return $.ajax({
+		url: `${window.url}/post/getListByApplyPost.json`,
+		data: {
+			pageNumber: pageNumber,
+			pageSize: pageSize,
+		},
+		cache: false,
+		method: 'GET',
+		type: 'GET',
+	});
+}
 
 /*function saveFollowPost(userId, recId, isFollow) {
 	return $.ajax({
@@ -311,6 +302,19 @@ function deletePost(id) {
 		type: 'POST'
 	});	
 }*/
+
+function getApplyPostByRecIdAndUserId(userId, recId) {
+	return $.ajax({
+		url: `${window.url}/applyPost/getApplyPostByRecIdAndUserId.json`,
+		data: {
+			userId: userId,
+			recId: recId,
+		},
+		cache: false, 
+		method: 'GET'
+	});
+}
+
 
 
 

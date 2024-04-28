@@ -1,8 +1,9 @@
-new Vue({
+const app = new Vue({
   el: '#app',
   data: {
     user: window.user,
     url: window.url,
+    authenSuccess: window.a,
     password1: '',
     passwordVisible1: true,
     password2: '',
@@ -27,9 +28,24 @@ new Vue({
 	},
 	
 	
-  computed: {
-    
-  },
+	mounted() {
+		document.onreadystatechange = async () => {
+			if (document.readyState == "complete") {
+				if(app.authenSuccess) {
+					swal({
+						title: "Xác thực tài khoản thành công",
+						text: "Vui lòng đăng nhập lại",
+						icon: "success",
+						button: "OK",
+					}).then((okClicked) => {
+						if (okClicked) {
+							window.location.href = this.url + "/auth/login";
+						}
+					});
+				}
+			}
+		}
+	},
   
   methods: {
 	togglePassword1() {

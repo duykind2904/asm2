@@ -44,4 +44,8 @@ public class ApplyPostService {
 		applyPostToUpdate.setStatus(isStatus);
         repo.save(applyPostToUpdate);
 	}
+
+	public ApplyPost getApplyPostByRecIdAndUserId(int userId, int recId) {
+		return repo.findById(userId, recId);
+	}
 }

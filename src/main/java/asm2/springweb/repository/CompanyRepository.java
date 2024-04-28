@@ -31,5 +31,13 @@ public interface CompanyRepository extends JpaRepository<Company, Integer>{
             nativeQuery = true)
 	Page<Company> getListOutstanding(Pageable pageable);
 	
+	@Query("SELECT count(c) FROM Company c "
+			+ "WHERE id in (SELECT f.company.id FROM FollowCompany f WHERE f.user.id = :userId)")
+	long countByFollowCompany(@Param("userId") int userId);
+	
+	@Query("SELECT c FROM Company c "
+			+ "WHERE id in (SELECT f.company.id FROM FollowCompany f WHERE f.user.id = :userId)")
+	Page<Company> getListByFollowCompany(@Param("userId") int userId, Pageable pageable);
+	
 	
 }

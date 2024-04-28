@@ -161,7 +161,7 @@ const app = new Vue({
   
 });
 
-async function setRecuiment(recs) {
+/*async function setRecuiment(recs) {
     const processedRecs = await Promise.all(
         recs.map(async (rec) => {
             const response = await checkFollowAndApplyPost(app.userId, rec.id);
@@ -173,7 +173,7 @@ async function setRecuiment(recs) {
         })
     );
     return processedRecs;
-}
+}*/
 
 function getRecruitmentOutstanding() {
 	return $.ajax({
@@ -200,7 +200,7 @@ function findCategoriesWithRecruitmentCount() {
 	});
 }
 
-function checkFollowAndApplyPost(userId, recId) {
+/*function checkFollowAndApplyPost(userId, recId) {
 	return $.ajax({
 		url: `${window.url}/post/checkFollowAndApplyPost.json`,
 		data: {
@@ -211,9 +211,9 @@ function checkFollowAndApplyPost(userId, recId) {
 		method: 'GET',
 		type: 'GET'
 	});
-}
+}*/
 
-function saveFollowPost(userId, recId, isFollow) {
+/*function saveFollowPost(userId, recId, isFollow) {
 	return $.ajax({
 		url: `${window.url}/post/handleFollowPost.json`,
 		data: {
@@ -225,9 +225,9 @@ function saveFollowPost(userId, recId, isFollow) {
 		method: 'GET',
 		type: 'GET'
 	});
-}
+}*/
 
-function getFileNameCV(userId) {
+/*function getFileNameCV(userId) {
 	return $.ajax({
 		url: `${window.url}/post/getFileNameCVByUserId.json`,
 		data: {
@@ -236,9 +236,9 @@ function getFileNameCV(userId) {
 		cache: false, 
 		method: 'GET'
 	});
-}
+}*/
 
-function deleteFile(fileName) {
+/*function deleteFile(fileName) {
 	return $.ajax({
 		url: `${window.url}/file/deleteFile.json`,
 		data: {
@@ -247,9 +247,9 @@ function deleteFile(fileName) {
 		cache: false, 
 		method: 'GET'
 	});
-}
+}*/
 
-function saveFile(file) {
+/*function saveFile(file) {
 	var formData = new FormData();
 	formData.append('file', file);
 	return $.ajax({
@@ -259,9 +259,9 @@ function saveFile(file) {
         processData: false, 
         contentType: false, 
 	});
-}
+}*/
 
-function updatenameCVToUser(userId, nameCV) {
+/*function updatenameCVToUser(userId, nameCV) {
 	return $.ajax({
 		url: `${window.url}/post/updatenameCVToUser.json`,
 		data: {
@@ -271,9 +271,9 @@ function updatenameCVToUser(userId, nameCV) {
 		cache: false, 
 		method: 'GET'
 	});
-}
+}*/
 
-function saveApplyPost(applyPost) {
+/*function saveApplyPost(applyPost) {
 	return $.ajax({
 		url: `${window.url}/applyPost/saveApplyPost.json`, 
 		data: JSON.stringify(applyPost),
@@ -283,7 +283,7 @@ function saveApplyPost(applyPost) {
 		method: 'POST',
 		type: 'POST'
 	});	
-}
+}*/
 
 
 

@@ -39,5 +39,15 @@ public class CompanyService {
 	public Company findById(int id) {
 		return repo.findById(id).get();
 	}
+	
+	public long countByFollowCompany(int userId) {
+		return repo.countByFollowCompany(userId);
+	}
+	
+	public List<Company> getListByFollowCompany(int userId, int pageNumber, int pageSize) {
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		return repo.getListByFollowCompany(userId, pageable).getContent();
+	}
+	
 
 }

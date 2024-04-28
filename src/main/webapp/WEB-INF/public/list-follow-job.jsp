@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Apply Job</title>
+    <title>Follow Job</title>
   <%@ include file="base/head.jsp" %>
 </head>
 
@@ -20,7 +20,7 @@
         <div class="row no-gutters slider-text align-items-end justify-content-start">
             <div class="col-md-12 text-center mb-5">
                 <p class="breadcrumbs mb-0"><span class="mr-3"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span>Danh sách <span></span></p>
-                <h1 class="mb-3 bread">Danh sách công việc đã ứng tuyển</h1>
+                <h1 class="mb-3 bread">Danh sách công việc đã theo dõi</h1>
             </div>
         </div>
     </div>
@@ -64,14 +64,11 @@
 										<span class="icon-heart"></span>
 									</div>
 								</div>
-								<div v-if="rec.applyPost.status == false" class="d-lg-flex">
-									<a @click="openModalApplyPost(rec)"
-										class="btn btn-primary py-2 mr-2">cập nhật</a>
-									<a class="btn btn-outline-secondary py-2"> Đợi duyệt</a>
-								</div>
-								<div v-if="rec.applyPost.status == true">
-									<a class="btn btn-outline-success py-2">Đã duyệt</a>
-								</div>
+								<a v-if="rec.isApply == false"
+											@click="openModalApplyPost(rec.id)"
+											class="btn btn-primary py-2">Ứng tuyển</a> <a
+											v-if="rec.isApply == true"
+											class="btn btn-secondary disabled py-2">Đã ứng tuyển</a>
 							</div>
 						</div>
 					</div>
@@ -104,13 +101,6 @@
 											</div>
 
 											<div v-if="selectionOption == 1" class="col-12">
-												<label for="fileUpload" class="col-form-label"><b>
-														CV: </b> <a href="#" @click="viewCV()"> {{applyPost.nameCV}}</a></label>
-												<br />
-												<label for="fileUpload" class="col-form-label"><b>
-														Cập nhật cv: </b></label> <input type="file" name="file"
-													class="form-control" @change="checkPdf($event)" required>
-											
 												<label for="fileUpload" class="col-form-label"><b>
 														Giới thiệu: </b></label>
 												<textarea rows="10" cols="3" class="form-control"
@@ -158,10 +148,11 @@
                         </div>
                     </div>
                 </div>
+              
 			</div>
 			
 			<div v-if="totalCount == 0" class="col-lg-12 pr-lg-12">
-				<h2 class = "text-primary"> Bạn chưa ứng tuyển vào bất kỳ công ty nào</h2>
+				<h2 class = "text-primary"> Bạn chưa theo dõi công việc nào</h2>
 			</div>
 		</div>
 	</div>
@@ -172,7 +163,7 @@
 	window.applyPost = ${applyPost};
 	window.url = '${pageContext.request.contextPath}';
 </script>
-<script src="<c:url value='/assets/js/export/list_apply_job.js' /> "></script>
+<script src="<c:url value='/assets/js/export/list_follow_job.js' /> "></script>
 <script src="<c:url value='/assets/js/export/commons.js' /> "></script>
 
 </body>

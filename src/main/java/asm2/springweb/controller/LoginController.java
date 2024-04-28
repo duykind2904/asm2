@@ -1,5 +1,7 @@
 package asm2.springweb.controller;
 
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,6 +56,25 @@ public class LoginController {
 		model.addAttribute("user", Mapper.toJSON(user));		
 		return "login";
 	}
+	
+	@GetMapping("/authenSuccess")
+	public String authenSuccess(@RequestParam(name = "id", defaultValue = "0") int id, Model model,
+			@RequestParam(name="code", defaultValue = "") String code) {
+		User user = userService.findById(id);
+    	if(user == null) {
+    		return "User not exist";
+    	} 
+    	
+    	if(user.getCode() == "" || !user.getCode().equals(code)) {
+    		return "Code not exist";
+    	}
+    	   	
+//    	userService.updateCode(user.getId(), "");
+    	userService.updateStatus(user.getId(), true);
+    	
+		model.addAttribute("a", Mapper.toJSON("SUCCESS"));
+		return "login";
+	}
 
 	@RequestMapping("/saveUser.json")
 	@ResponseBody
@@ -66,20 +89,26 @@ public class LoginController {
 	@ResponseBody
 	public ResponseEntity<String> authenticateEmail(@RequestParam(name = "email") String email) {
 		User user = userService.findByEmail(email);
-		if(user != null) {
-			try {
-				
-	            emailService.sendMail("duykind2904@gmail.com", "Test Email", "This is a test email from Spring MVC.");
-	            return new ResponseEntity<String>("Email sent successfully", HttpStatus.OK);
-	        } catch (Exception ex) {
-	        	return new ResponseEntity<String>("Error sending email", HttpStatus.OK);
-	        }			
-			
-		} else {
+		if(user == null) {
 			return new ResponseEntity<String>("email not existed", HttpStatus.OK);
 		}
 		
+		try {
+			String code = generateRandomString();
+	    	String resetLink = "localhost:6060/ASM2/auth/authenSuccess" +  "?id=" + user.getId() + "&code=" + code;
+	    	String subject = "Xác thực thông tin";
+	    	String emailContent = "Xin chào " + user.getFullName() + "\n. Vui lòng pass đường link sau để xác thực tài khoản của bạn.:\n"
+	    	        +  resetLink;
+	    	userService.updateCode(user.getId(), code);
+            emailService.sendMail(user.getEmail(), subject, emailContent);
+            return new ResponseEntity<String>("Email sent successfully", HttpStatus.OK);
+        } catch (Exception ex) {
+        	return new ResponseEntity<String>("Error sending email", HttpStatus.OK);
+        }
+		
     }
+	
+	
 	
 	@RequestMapping("/checkStatusUserByEmail.json")
 	@ResponseBody
@@ -124,5 +153,35 @@ public class LoginController {
 	public boolean checkEmailCanDo(@RequestParam(value = "email", defaultValue =  "") String email) {
 		return userService.findByEmail(email) != null ? true : false;
 	}
+	
+	private String generateRandomString() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        int length = 20;
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            char randomChar = characters.charAt(index);
+            sb.append(randomChar);
+        }
+
+        return sb.toString().toUpperCase();
+    }
+	
+	public String loginSuccess(int userId) {
+        try {
+        	User user = userService.findById(userId);
+        	UserDetails userDetails = userService.loadUserByUsername(user.getEmail());
+            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
+
+            Authentication authenticated = authenticationManager.authenticate(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authenticated);
+        } catch (AuthenticationException e) {
+        	return "KO";
+        }
+		
+        return "OK";
+    }
 	
 }

@@ -58,7 +58,22 @@ public class PostController {
 	@Autowired SaveJobService saveJobService;
 	
 	@RequestMapping("/list")
-	public String listJob() {
+	public String listJob(Model model, Principal principal,
+			@RequestParam(name="companyId", defaultValue = "0") int companyId) {
+		User user = new User();
+		if(principal != null) {
+			user = userService.findByEmail(principal.getName());
+		}
+		if(user.getRole() != null && user.getRole().getId() == 2) {
+			Company company = companyService.findByUserId(user.getId());
+			companyId = company.getId();
+			
+		}
+		ApplyPostDTO aPDTO = new ApplyPostDTO();
+		
+		model.addAttribute("applyPost", Mapper.toJSON(aPDTO));		
+		model.addAttribute("userId", Mapper.toJSON(user.getId()));
+		model.addAttribute("companyId", Mapper.toJSON(companyId));
 		return "post-list";
 	}
 	
@@ -180,21 +195,35 @@ public class PostController {
 	}
 	
 	
-	@GetMapping("/countListPost.json")
+	@GetMapping("/countListPostByCompanyId.json")
 	@ResponseBody
-	public ResponseEntity<Long> countListPost(Principal principal) {
-		long count = recruitmentService.countListByEmailUser(principal.getName());
+	public ResponseEntity<Long> countListPostByCompanyId(Principal principal,
+			@RequestParam(name = "companyId", defaultValue = "0") int companyId) {
+		long count = 0;
+		if(companyId == 0) {
+			count = recruitmentService.countListByEmailUser(principal.getName());
+		} else {
+			count = recruitmentService.countListByCompanyId(companyId);
+		}
 		
 		return new ResponseEntity<Long>(count, HttpStatus.OK);
 	}
 	
-	@GetMapping("/getListPost.json")
+	@GetMapping("/getListPostByCompanyId.json")
 	@ResponseBody
-	public ResponseEntity<List<RecruitmentShowList>> getListPost(Principal principal,
+	public ResponseEntity<List<RecruitmentShowList>> getListPostByCompanyId(Principal principal,
+			@RequestParam(name = "companyId", defaultValue = "0") int companyId,
 			@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
 			@RequestParam(name="pageSize", defaultValue = "0") int pageSize) {
 		pageNumber = pageNumber - 1;
-		List<Recruitment> list = recruitmentService.getListByEmailUser(principal.getName(), pageNumber, pageSize);
+		
+		List<Recruitment> list = new ArrayList<Recruitment>();
+		if(companyId == 0) {
+			list = recruitmentService.getListByEmailUser(principal.getName(), pageNumber, pageSize);
+		} else {
+			list = recruitmentService.getListByCompanyId(companyId, pageNumber, pageSize);
+		}
+		
 		List<RecruitmentShowList> listShow = new ArrayList<RecruitmentShowList>();
 		for(Recruitment r : list) {
 			RecruitmentShowList rs = new RecruitmentShowList();
@@ -349,7 +378,89 @@ public class PostController {
 		return new ResponseEntity<List<RecruitmentShowList>>(listShow, HttpStatus.OK);
 	}
     
+    @GetMapping("/countByApplyPost.json")
+	@ResponseBody
+	public ResponseEntity<Long> countByApplyPost(Principal principal) {		
+    	User user = new User();
+		if(principal == null) {
+			return new ResponseEntity<Long>(-1L, HttpStatus.OK);
+		}
+		
+		user = userService.findByEmail(principal.getName());
+		
+		long count = recruitmentService.countByApplyPost(user.getId());
+		return new ResponseEntity<Long>(count, HttpStatus.OK);
+	}
     
+    @GetMapping("/getListByApplyPost.json")
+	@ResponseBody
+	public ResponseEntity<List<RecruitmentShowList>> getListByApplyPost(Principal principal,
+			@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
+			@RequestParam(name="pageSize", defaultValue = "5") int pageSize) {
+    	User user = new User();
+		if(principal == null) {
+			return new ResponseEntity<>(null, HttpStatus.OK);
+		}
+		
+		user = userService.findByEmail(principal.getName());
+		
+		pageNumber = pageNumber - 1;
+		List<Recruitment> list = recruitmentService.getListByApplyPost(user.getId(), pageNumber, pageSize);
+		List<RecruitmentShowList> listShow = new ArrayList<RecruitmentShowList>();
+		for(Recruitment r : list) {
+			RecruitmentShowList rs = new RecruitmentShowList();
+			rs.setId(r.getId());
+			rs.setTitle(r.getTitle());
+			rs.setAddress(r.getAddress());
+			rs.setCompanyName(r.getCompany().getName());
+			rs.setStatus(r.isStatus());
+			rs.setType(r.getType());
+			listShow.add(rs);
+		}
+		return new ResponseEntity<List<RecruitmentShowList>>(listShow, HttpStatus.OK);
+	}
+    
+    @GetMapping("/countByFollow.json")
+	@ResponseBody
+	public ResponseEntity<Long> countByFollow(Principal principal) {		
+    	User user = new User();
+		if(principal == null) {
+			return new ResponseEntity<Long>(-1L, HttpStatus.OK);
+		}
+		
+		user = userService.findByEmail(principal.getName());
+		
+		long count = recruitmentService.countByFollow(user.getId());
+		return new ResponseEntity<Long>(count, HttpStatus.OK);
+	}
+    
+    @GetMapping("/getListByFollow.json")
+	@ResponseBody
+	public ResponseEntity<List<RecruitmentShowList>> getListByFollow(Principal principal,
+			@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
+			@RequestParam(name="pageSize", defaultValue = "5") int pageSize) {
+    	User user = new User();
+		if(principal == null) {
+			return new ResponseEntity<>(null, HttpStatus.OK);
+		}
+		
+		user = userService.findByEmail(principal.getName());
+		
+		pageNumber = pageNumber - 1;
+		List<Recruitment> list = recruitmentService.getListByFollow(user.getId(), pageNumber, pageSize);
+		List<RecruitmentShowList> listShow = new ArrayList<RecruitmentShowList>();
+		for(Recruitment r : list) {
+			RecruitmentShowList rs = new RecruitmentShowList();
+			rs.setId(r.getId());
+			rs.setTitle(r.getTitle());
+			rs.setAddress(r.getAddress());
+			rs.setCompanyName(r.getCompany().getName());
+			rs.setStatus(r.isStatus());
+			rs.setType(r.getType());
+			listShow.add(rs);
+		}
+		return new ResponseEntity<List<RecruitmentShowList>>(listShow, HttpStatus.OK);
+	}
     
     @GetMapping("/checkFollowAndApplyPost.json")
 	@ResponseBody

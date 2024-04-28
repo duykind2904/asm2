@@ -2,6 +2,7 @@ package asm2.springweb.dto;
 
 import java.util.List;
 
+import asm2.springweb.entity.Company;
 import asm2.springweb.entity.Recruitment;
 import asm2.springweb.entity.User;
 
@@ -17,6 +18,23 @@ public class CompanyDTO {
 	private User user;
 	private List<Recruitment> recruitment;
 	private int CountRecruitmenting;
+	
+	public static CompanyDTO convertToDTO(Company com) {
+		CompanyDTO comDTO = new CompanyDTO();
+		if(com.getId() > 0) comDTO.setId(com.getId());
+		if(com.getAddress() != null) comDTO.setAddress(com.getAddress());
+		if(com.getEmail() != null) comDTO.setEmail(com.getEmail());
+		if(com.getName() != null) comDTO.setName(com.getName());
+		if(com.getDescription() != null) comDTO.setDescription(com.getDescription());
+		if(com.getPhoneNumber() != null) comDTO.setPhoneNumber(com.getPhoneNumber());
+		if(com.getLogo() != null) comDTO.setLogo(com.getLogo());
+		comDTO.setStatus(com.isStatus());
+		
+		return comDTO;
+		
+	}
+	
+	
 	public int getId() {
 		return id;
 	}
