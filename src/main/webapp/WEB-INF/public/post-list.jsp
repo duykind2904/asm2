@@ -52,7 +52,7 @@
                                 <div class="one-forth ml-auto d-flex align-items-center mt-4 md-md-0" style="width: 330px !important;">
                                     <a :href="`${pageContext.request.contextPath}/post/detail?id=` + r.id" class="btn btn-primary py-2 ml-2">Xem chi tiết</a>
                                     <a :href="`${pageContext.request.contextPath}/post/edit?id=` + r.id"  class="btn btn-warning py-2 ml-2">Cập nhật</a>
-                                    <a class="btn btn-danger py-2 ml-2" href="" data-toggle="modal" :data-target="'#exampleModal-' + r.id">Xóa</a>
+                                    <a class="btn btn-danger py-2 ml-2" href="" data-toggle="modal" :data-target="'#exampleModaldelete-' + r.id">Xóa</a>
                                 </div>
                                 </c:if>
                                 
@@ -136,7 +136,7 @@
 							</div>
                         
                         <!-- Modal -->
-                        <div class="modal fade" :id="'exampleModal-' + r.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" :id="'exampleModaldelete-' + r.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -150,7 +150,7 @@
                                         <form>
                                             <div class="modal-footer mt-1">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                                <button type="button" @click="deletePost(r.id)" class="btn btn-danger">Xóa</button>
+                                                <button type="button" @click="deletePost(r.id)" data-dismiss="modal" class="btn btn-danger">Xóa</button>
                                             </div>
                                         </form>
                                     </div>

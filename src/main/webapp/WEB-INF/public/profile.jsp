@@ -13,27 +13,27 @@
 <body>
 <%@ include file="base/nav.jsp" %>
 	
-	
-<div class="hero-wrap hero-wrap-2" style="background-image: url('<c:url value='/assets/images/bg_1.jpg' />')" data-stellar-background-ratio="0.5">
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row no-gutters slider-text align-items-end justify-content-start">
-            <div class="col-md-12 text-center mb-5">
-                <h1 class="mb-3 bread">Hồ sơ </h1>
-                <div class="form-group">
-                    <label class="btn btn-primary btn-md btn-file">
-                        Chọn ảnh<input type="file" name="file" id="fileUpload" hidden @change="checkImage($event)">
-                    </label>
-                </div>
-                <div style="margin-left: 0px" id="divImage" >
-                    <img v-if="user.image && user.image !== ''" :src='"${pageContext.request.contextPath}/assets/images/uploads/" + user.image' alt="Selected Image"
-                     id="avatar" height="100" width="100" style="border-radius: 50px" >
-                     <img v-else="user.image && user.image !== ''" id="avatar" height="100" width="100" style="border-radius: 50px" >
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<section id = "app">	
+	<div class="hero-wrap hero-wrap-2" style="background-image: url('<c:url value='/assets/images/bg_1.jpg' />')" data-stellar-background-ratio="0.5">
+	    <div class="overlay"></div>
+	    <div class="container">
+	        <div class="row no-gutters slider-text align-items-end justify-content-start">
+	            <div class="col-md-12 text-center mb-5">
+	                <h1 class="mb-3 bread">Hồ sơ </h1>
+	                <div class="form-group">
+	                    <label class="btn btn-primary btn-md btn-file">
+	                        Chọn ảnh<input type="file" name="file" id="fileUpload" hidden @change="checkImage($event)">
+	                    </label>
+	                </div>
+	                <div style="margin-left: 0px" id="divImage" >
+	                    <img v-if="user.image && user.image !== ''" :src='"${pageContext.request.contextPath}/assets/images/uploads/" + user.image' alt="Selected Image"
+	                     id="avatar" height="100" width="100" style="border-radius: 50px" >
+	                     <img v-else="user.image && user.image !== ''" id="avatar" height="100" width="100" style="border-radius: 50px" >
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
 	<!-- HOME -->
 
 	<section v-if="user.role.id === 1" class="site-section" style="margin-top: 10px">

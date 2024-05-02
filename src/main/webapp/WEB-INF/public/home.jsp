@@ -258,7 +258,7 @@
                                         <div><span class="icon-my_location"></span> <span>{{rec.address}}</span></div>
                                     </div>
                                 </div>
-                                <div  class="one-forth ml-auto d-flex align-items-center mt-4 md-md-0">
+                                <div  class="one-forth ml-auto d-flex align-items-center mt-4 md-md-0" style="width: 330px !important;">
                                     <div >
                                         <div v-if="rec.isFollow == false" @click="folowRecuitment(rec.id, true)" class=" text-center d-flex justify-content-center align-items-center icon mr-2">
                                             <span class="icon-heart"></span>

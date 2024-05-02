@@ -35,10 +35,16 @@ const app = new Vue({
 		  console.log(this.recruitment);
 
 		  if (bool) {
-			  swal("Tạo bài đăng tuyển thành công");
+			  if(this.recruitment.id == 0) {
+				  swal("Tạo bài đăng tuyển thành công");
+			  } else {
+				  swal("Cập nhật bài đăng thành công");
+			  }
+			  
 			  saveRecruitment(this.recruitment).done();
 			  setTimeout(function() {
 				  swal.close();
+				  window.location.href = this.url + "/post/list";
 			  }, 2000);
 			  
 			  

@@ -110,7 +110,7 @@ public class PostController {
 		recruitment.setCategorySelected(String.valueOf(recruitment.getCategory().getId()));
 		recruitment.setCategory(null);
 		recruitment.setCompany(null);
-		
+		recruitment.setApplyPosts(null);	
 		model.addAttribute("recruitment", Mapper.toJSON(recruitment));
 		return "post-job";
 	}
